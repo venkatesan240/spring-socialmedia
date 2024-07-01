@@ -148,7 +148,7 @@ response.setHeader("Expires", "0"); // Proxies.
      </form>
 <% 
     // Check if there's an error message
-    String errorMessage = (String) request.getAttribute("errorMessage");
+    String errorMessage = (String) request.getAttribute("error");
     if (errorMessage != null) {
 %>
         <script type="text/javascript">
@@ -168,6 +168,9 @@ response.setHeader("Expires", "0"); // Proxies.
 <%
     }
 %>
+<c:if test="${not empty rmsg}">
+    <div class="alert alert-success">${rmsg}</div>
+</c:if>
             <div class="sign-up">
                 <p>Don't have an account? <a href="signup.jsp" class="sign-link">Sign up</a></p>
             </div>
