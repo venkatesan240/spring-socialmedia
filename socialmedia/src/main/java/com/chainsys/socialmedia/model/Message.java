@@ -6,18 +6,18 @@ public class Message {
     private int senderId;
     private int receiverId;
     private String message;
-    private String timestamp;
+    private String timeStamp;
     
 	public Message() {
 		super();
 	}
-	public Message(int id, int senderId, int receiverId, String message, String timestamp) {
+	public Message(int id, int senderId, int receiverId, String message, String timeStamp) {
 		super();
 		this.id = id;
 		this.senderId = senderId;
 		this.receiverId = receiverId;
 		this.message = message;
-		this.timestamp = timestamp;
+		this.timeStamp = timeStamp;
 	}
 	public int getId() {
 		return id;
@@ -44,10 +44,10 @@ public class Message {
 		this.message = message;
 	}
 	public String getTimestamp() {
-		return timestamp;
+		return timeStamp;
 	}
-	public void setTimestamp(String timestamp) {
-		this.timestamp = timestamp;
+	public void setTimestamp(String timeStamp) {
+		this.timeStamp = timeStamp;
 	}
     
     

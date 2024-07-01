@@ -2,11 +2,11 @@ package com.chainsys.socialmedia.model;
 
 public class Comment {
 
-	private int commentid;
-	private int postid;
-	private int userid;
-	private String commentcontent;
-	private String createdat;
+	private int commentId;
+	private int postId;
+	private int userId;
+	private String commentContent;
+	private String createdAt;
 	
 	
 	public Comment() {
@@ -16,61 +16,61 @@ public class Comment {
 
 	public Comment(int commentid, int postid, int userid, String comment, String createdat) {
 		super();
-		this.commentid = commentid;
-		this.postid = postid;
-		this.userid = userid;
-		this.commentcontent = comment;
-		this.createdat = createdat;
+		this.commentId = commentid;
+		this.postId = postid;
+		this.userId = userid;
+		this.commentContent = comment;
+		this.createdAt = createdat;
 	}
 
 
-	public int getCommentid() {
-		return commentid;
+	public int getCommentId() {
+		return commentId;
 	}
 
 
-	public void setCommentid(int commentid) {
-		this.commentid = commentid;
+	public void setCommentId(int commentId) {
+		this.commentId = commentId;
 	}
 
 
-	public int getPostid() {
-		return postid;
+	public int getPostId() {
+		return postId;
 	}
 
 
-	public void setPostid(int postid) {
-		this.postid = postid;
+	public void setPostId(int postId) {
+		this.postId = postId;
 	}
 
 
-	public int getUserid() {
-		return userid;
+	public int getUserId() {
+		return userId;
 	}
 
 
-	public void setUserid(int userid) {
-		this.userid = userid;
+	public void setUserid(int userId) {
+		this.userId = userId;
 	}
 
 
 	public String getComment() {
-		return commentcontent;
+		return commentContent;
 	}
 
 
 	public void setComment(String comment) {
-		this.commentcontent = comment;
+		this.commentContent = comment;
 	}
 
 
-	public String getCreatedat() {
-		return createdat;
+	public String getCreatedAt() {
+		return createdAt;
 	}
 
 
-	public void setCreatedat(String createdat) {
-		this.createdat = createdat;
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
 	}
 	
 	

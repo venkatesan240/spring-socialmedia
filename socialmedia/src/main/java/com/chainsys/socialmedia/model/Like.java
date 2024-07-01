@@ -2,62 +2,62 @@ package com.chainsys.socialmedia.model;
 
 public class Like {
 	
-	private int likeid;
-	private int postid;
-	private int userid;
-	private String createdat;
-	private int likecount;
+	private int likeId;
+	private int postId;
+	private int userId;
+	private String createdAt;
+	private int likeCount;
 	
 	public Like() {
 		super();
 	}
 
-	public Like(int likeid, int postid, int userid, String createdat) {
+	public Like(int likeId, int postId, int userId, String createdAt) {
 		super();
-		this.likeid = likeid;
-		this.postid = postid;
-		this.userid = userid;
-		this.createdat = createdat;
+		this.likeId = likeId;
+		this.postId = postId;
+		this.userId = userId;
+		this.createdAt = createdAt;
 	}
 
 	public int getLikecount() {
-		return likecount;
+		return likeCount;
 	}
 
 	public void setLikecount(int likecount) {
-		this.likecount = likecount;
+		this.likeCount = likecount;
 	}
 
 	public int getLikeid() {
-		return likeid;
+		return likeId;
 	}
 
 	public void setLikeid(int likeid) {
-		this.likeid = likeid;
+		this.likeId = likeid;
 	}
 
 	public int getPostid() {
-		return postid;
+		return postId;
 	}
 
 	public void setPostid(int postid) {
-		this.postid = postid;
+		this.postId = postid;
 	}
 
 	public int getUserid() {
-		return userid;
+		return userId;
 	}
 
 	public void setUserid(int userid) {
-		this.userid = userid;
+		this.userId = userid;
 	}
 
 	public String getCreatedat() {
-		return createdat;
+		return createdAt;
 	}
 
 	public void setCreatedat(String createdat) {
-		this.createdat = createdat;
+		this.createdAt = createdat;
 	}
 
 	public boolean isLiked() {
