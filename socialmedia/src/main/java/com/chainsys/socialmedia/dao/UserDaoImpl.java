@@ -15,8 +15,11 @@ public class UserDaoImpl implements UserDAO{
 
 	 @Autowired
 	    JdbcTemplate  jdbcTemplate;
+	 
 	    @Autowired
 	    UserRowMapper ur;
+	    
+	    
 	  
 	    public boolean emailExists(String email) {
 	        String query = "SELECT COUNT(*) FROM user WHERE email = ?";
@@ -48,9 +51,31 @@ public class UserDaoImpl implements UserDAO{
 		}
 
 		@Override
-		public List<User> getUserDetails(User user) {
+		public User getUserDetails(User user) {
 			String query="select * from user where email=?";
 			Object[] params= {user.getEmail()};
-			return jdbcTemplate.query(query,params,ur);
+			return jdbcTemplate.queryForObject(query,params,ur);
+		}
+
+		@Override
+		public String updateUser(User user) {
+			String updateQuery="update user set first_name=?,last_name=?,email=?,profile=? where user_id=?";
+			Object[] params= {user.getFirstName(),user.getLastName(),user.getEmail(),user.getProfile(),user.getUserId()};
+			jdbcTemplate.update(updateQuery, params);
+			return "updated sucessfully";
+		}
+
+		@Override
+		public int getId(String email) {
+			String query="select user_id from user where email=?";
+			Object[] params= {email};
+			return jdbcTemplate.queryForObject(query, params, Integer.class);
+		}
+
+		@Override
+		public User getUserById(int id) {
+			String query="select * from user where user_id=?";
+			Object[] params= {id};
+			return jdbcTemplate.queryForObject(query,params,ur);
 		}
 }

@@ -1,12 +1,16 @@
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@page import="org.springframework.context.ApplicationContext"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.util.Base64" %>
 <%@ page import="com.chainsys.socialmedia.model.User" %>
 <%@ page import="com.chainsys.socialmedia.dao.*" %>
 <%
-    UserDAO userDAO = new UserDaoImpl();
+   UserDAO userDAO = new UserDaoImpl();
     String base64Image = "";
-    User user = (User)session.getAttribute("user");
+    User user = userDAO.getUserById((Integer)(session.getAttribute("userid")));
+    ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+    UserDaoImpl userDaoImpl = (UserDaoImpl) context.getBean("userDaoImpl");
     if (user != null && user.getProfile() != null) {
         base64Image = Base64.getEncoder().encodeToString(user.getProfile());
     }
@@ -153,7 +157,7 @@ img {
                 </a>
                 <div class="dropdown-content">
                     <div class="name">
-                        <a><%= user.getFirstName() %></a>
+                        <a><%= user.getFirstName() + " " + user.getLastName() %></a>
                     </div>
                     <a href="logout">Logout</a>
                     <a href="profile.jsp">Profile</a>

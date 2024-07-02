@@ -11,5 +11,8 @@ public interface UserDAO {
 
 	public String save(User user);
 	public int loginCredencial(User user);
-	public List<User> getUserDetails(User user);
+	public User getUserDetails(User user);
+	public String updateUser(User user);
+	public int getId(String email);
+	public User getUserById(int id);
 }
