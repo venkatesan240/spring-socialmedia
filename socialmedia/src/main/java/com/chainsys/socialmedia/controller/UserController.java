@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.chainsys.socialmedia.dao.UserDAO;
 import com.chainsys.socialmedia.model.User;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 
@@ -60,8 +63,21 @@ User user=new User();
         }		
 	}
 	
+	@RequestMapping("/logout")
+	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		HttpSession session = request.getSession();
+        if (session != null) {
+            session.invalidate();
+        }
+        response.sendRedirect("signin.jsp");
+	}
+	
 	@PostMapping("/UpdateProfile")
-	public String updateUser(@RequestParam("first-name") String firstName,@RequestParam("last-name") String lastName,@RequestParam("email") String email,@RequestParam("profile-image") Part part,Model model) throws IOException {
+	public String updateUser(HttpSession session, @RequestParam("first-name") String firstName,@RequestParam("last-name") String lastName,@RequestParam("email") String email,@RequestParam("profile-image") Part part,Model model) throws IOException {
+		 int userid = (Integer) session.getAttribute("userid");
+		    if (userid == 0) {
+		        return "signin.jsp";
+		    } 
 		InputStream is=null;
 		byte[] data = null;
 		if(part != null) {
@@ -74,11 +90,12 @@ User user=new User();
 		user.setLastName(lastName);
 		user.setEmail(email);
 		user.setProfile(data);
+		user.setUserId(userid);
 		System.out.println("user id"+user.getUserId());
 		String  result = userDao.updateUser(user);
 		if(result.equals("updated sucessfully")) {
-			 model.addAttribute("alert", result);
-			 return "profile.jsp";
+			 model.addAttribute("alert", "profile updated sucessfully");
+			 return "header.jsp";
 		}
 		model.addAttribute("alert","updation failed");
 		return  "update.jsp";

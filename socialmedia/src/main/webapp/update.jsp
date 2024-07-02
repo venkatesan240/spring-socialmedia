@@ -10,7 +10,7 @@
 <title>Insert title here</title>
 	<script type="text/javascript">
         window.onload = function() {
-        	var alertMessage = "<%= alertMessage != null ? alertMessage : "" %>";
+        alertMessage = "<%= alertMessage != null ? alertMessage : "" %>";
             if (alertMessage.trim() !== "") {
                 alert(alertMessage);
             }

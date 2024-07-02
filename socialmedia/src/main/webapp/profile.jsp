@@ -1,3 +1,5 @@
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@page import="org.springframework.context.ApplicationContext"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
     <%@ page import="java.util.Base64" %>
@@ -6,11 +8,12 @@
 <%
     UserDAO userDAO = new UserDaoImpl();
     String base64Image = "";
-    User user = userDAO.getUserById((Integer)(session.getAttribute("userid")));
+    ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+    UserDaoImpl userDaoImpl = (UserDaoImpl) context.getBean("userDaoImpl");
+    User user = userDaoImpl.getUserById((Integer)(session.getAttribute("userid")));
     if (user != null && user.getProfile() != null) {
         base64Image = Base64.getEncoder().encodeToString(user.getProfile());
     }
-    String alertMessage = (String) request.getAttribute("alert");
 %> 
 <!DOCTYPE html>
 <html lang="en">
@@ -72,14 +75,6 @@ a p:hover {
 <head>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
-	<script type="text/javascript">
-        window.onload = function() {
-        	 var alertMessage = "<%= alertMessage != null ? alertMessage : "" %>";
-             if (alertMessage.trim() !== "") {
-                 alert(alertMessage);
-             }
-        }
-    </script>
 </head>
 <body>
 <h1>User Profile</h1>

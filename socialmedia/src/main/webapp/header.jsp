@@ -8,12 +8,13 @@
 <%
    UserDAO userDAO = new UserDaoImpl();
     String base64Image = "";
-    User user = userDAO.getUserById((Integer)(session.getAttribute("userid")));
     ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
     UserDaoImpl userDaoImpl = (UserDaoImpl) context.getBean("userDaoImpl");
+    User user = userDaoImpl.getUserById((Integer)(session.getAttribute("userid")));
     if (user != null && user.getProfile() != null) {
         base64Image = Base64.getEncoder().encodeToString(user.getProfile());
     }
+    String alert = (String) request.getAttribute("alert");
 %>
 
 <!DOCTYPE html>
@@ -144,6 +145,14 @@ img {
         <%
         }
         %>
+        <script type="text/javascript">
+        window.onload = function() {
+        	 alertMessage = "<%= alert != null ? alert : "" %>";
+             if (alertMessage.trim() !== "") {
+                 alert(alertMessage);
+             }
+        }
+    </script>
        <nav>
         <ul>
         	<li><a href="search.jsp"><i class="fa-solid fa-magnifying-glass"></i></a></li>
