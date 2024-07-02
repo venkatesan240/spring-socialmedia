@@ -14,7 +14,6 @@
     if (user != null && user.getProfile() != null) {
         base64Image = Base64.getEncoder().encodeToString(user.getProfile());
     }
-    String alert = (String) request.getAttribute("alert");
 %>
 
 <!DOCTYPE html>
@@ -134,23 +133,16 @@ img {
         <div class="logo">
             <img src="img/connect-high-resolution-logo-black.png" alt="insta">
         </div>
-        <% 
-        // Check if there's an error message
-        String message1 = (String) request.getAttribute("updateMessage");
-        if (message1 != null) {
-        %>
-            <script type="text/javascript">
-                alert("<%= message1 %>");
-            </script>
         <%
-        }
-        %>
+    String alert = (String) session.getAttribute("alert");
+%>
         <script type="text/javascript">
         window.onload = function() {
-        	 alertMessage = "<%= alert != null ? alert : "" %>";
-             if (alertMessage.trim() !== "") {
-                 alert(alertMessage);
-             }
+        	var alertMessage = "<%= alert != null ? alert : "" %>";
+            if (alertMessage.trim() !== "") {
+                alert(alertMessage);
+                session.removeAttribute("alert");
+            }
         }
     </script>
        <nav>

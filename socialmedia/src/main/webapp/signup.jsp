@@ -137,25 +137,28 @@ main {
         <div class="form-div">
             <form action="signup" method="post" onsubmit="return validatePassword()">
                 <img class="instaLogo" src="img/connect-high-resolution-logo-black.png" alt="logo">
-                <input type="text" class="input" name="first-name" placeholder="first name" required>
-                <input type="text" class="input" name="last-name" placeholder="last name" required>
+                <input type="text" class="input" name="first-name" placeholder="first name" pattern="[a-zA-Z]{5,}"title="First name should contain only letters" required>
+                <input type="text" class="input" name="last-name" placeholder="last name" pattern="[a-zA-Z]{1,}" title="Last name should contain only letters"  required>
                 <input type="text" class="input" name="email" placeholder="email" required>
-                 <input type="password" class="input" id="password" name="password" required placeholder="Password">
-        <input type="password" class="input" id="confirm-password" name="confirm-password" required placeholder="Confirm Password">
+                 <input type="password" class="input" id="password" name="password" pattern="[a-zA-Z0-9@#]{4,}" title="Password must be at least 4 characters long" required placeholder="Password">
+        <input type="password" class="input" id="confirm-password" name="confirm-password" pattern="[a-zA-Z0-9@#]{4,}" title="Password must be at least 4 characters long" required placeholder="Confirm Password">
         <input type="checkbox" id="toggle-password"> Show Password
         <div id="password-error" class="error-message"></div>
                 <button class="login-btn">Register</button>
-<% 
-    // Check if there's an error message
-    String errorMessage = (String) request.getAttribute("error");
-    if (errorMessage != null) {
-%>
-        <script type="text/javascript">
-            alert("<%= errorMessage %>");
-        </script>
-<%
-    }
-%>
+<% if (request.getAttribute("error") != null) { %>
+        <div class="error">
+            <%= request.getAttribute("error") %>
+        </div>
+    <% } %>
+
+    <script type="text/javascript">
+        window.onload = function() {
+            var alertMessage = "<%= request.getAttribute("error") != null ? request.getAttribute("error") : "" %>";
+            if (alertMessage.trim() !== "") {
+                alert(alertMessage);
+            }
+        }
+    </script>
             </form>
             <div class="get-app">
                 <p>Get the app</p>

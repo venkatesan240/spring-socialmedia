@@ -30,29 +30,47 @@ User user=new User();
 	
 	@RequestMapping("/signup")
 	public String toRegister(@RequestParam("first-name") String firstName,@RequestParam("last-name") String lastName,@RequestParam("email") String email,@RequestParam("password") String password,Model model) throws ClassNotFoundException {
-		user.setFirstName(firstName);
-		user.setLastName(lastName);
-		user.setEmail(email);
-		user.setPassword(password);
-		String result = userDao.save(user);
-        if ("Registration successful".equals(result)) {
-            model.addAttribute("rmsg", result);
+		boolean isValid = true;
+        StringBuilder errorMessage = new StringBuilder();
+
+        if (!firstName.matches("[a-zA-Z]{5,}")) {
+            isValid = false;
+            errorMessage.append("First name should contain only letters and at least 5 characters long.<br>");
+        }
+        if (!lastName.matches("[a-zA-Z]{1,}")) {
+            isValid = false;
+            errorMessage.append("Last name should contain only letters.<br>");
+        }
+        if (!email.matches("[a-zA-Z0-9@.]{10,}")) {
+            isValid = false;
+            errorMessage.append("Email should be at least 10 characters long and contain only letters, numbers, and '@'.<br>");
+        }
+        if (!password.matches("[a-zA-Z0-9@#]{4,}")) {
+            isValid = false;
+            errorMessage.append("Password should be at least 4 characters long and contain only letters, numbers, and '@' or '#'.<br>");
+        }
+
+        if (isValid) {
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            user.setPassword(password);
+            String result = userDao.save(user);
+            model.addAttribute("Message",result);
             return "signin.jsp";
         } else {
-            model.addAttribute("error", result);
+            model.addAttribute("error", errorMessage.toString());
             return "signup.jsp";
-        }
+        } 
 	}
 	
 	@PostMapping("/signin")
 	public String toLogin(HttpSession session ,	@RequestParam("email")String email,@RequestParam("password")String password,Model model) {
-		user.setEmail(email);
-		user.setPassword(password);
-		int count = userDao.loginCredencial(user);
+		int count = userDao.loginCredencial(email,password);
 		System.out.println("count"+count);
         if (count > 0) {
         	System.out.println("inside session");
-        	User users = userDao.getUserDetails(user);
+        	User users = userDao.getUserDetails(email);
         	int userid = userDao.getId(email);
             session.setAttribute("user", users);
             session.setAttribute("userid", userid);
@@ -94,8 +112,8 @@ User user=new User();
 		System.out.println("user id"+user.getUserId());
 		String  result = userDao.updateUser(user);
 		if(result.equals("updated sucessfully")) {
-			 model.addAttribute("alert", "profile updated sucessfully");
-			 return "header.jsp";
+			session.setAttribute("alert", result);
+		    return "header.jsp";
 		}
 		model.addAttribute("alert","updation failed");
 		return  "update.jsp";
