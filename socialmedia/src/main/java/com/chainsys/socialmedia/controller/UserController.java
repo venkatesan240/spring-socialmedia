@@ -1,14 +1,25 @@
 package com.chainsys.socialmedia.controller;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import com.chainsys.socialmedia.dao.UserDAO;
+import com.chainsys.socialmedia.model.Comment;
+import com.chainsys.socialmedia.model.Post;
 import com.chainsys.socialmedia.model.User;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,19 +29,19 @@ import jakarta.servlet.http.Part;
 @Controller
 public class UserController {
 
-User user=new User();
-	
-	@Autowired
-	private UserDAO userDao;
-	
-	@RequestMapping("/")
-	public String save() {		
-		return "signin.jsp";
-	}
-	
-	@RequestMapping("/signup")
-	public String toRegister(@RequestParam("first-name") String firstName,@RequestParam("last-name") String lastName,@RequestParam("email") String email,@RequestParam("password") String password,Model model) throws ClassNotFoundException {
-		boolean isValid = true;
+    User user = new User();
+
+    @Autowired
+    private UserDAO userDao;
+
+    @RequestMapping("/")
+    public String save() {
+        return "signin.jsp";
+    }
+
+    @RequestMapping("/signup")
+    public String toRegister(@RequestParam("first-name") String firstName, @RequestParam("last-name") String lastName, @RequestParam("email") String email, @RequestParam("password") String password, Model model) throws ClassNotFoundException {
+        boolean isValid = true;
         StringBuilder errorMessage = new StringBuilder();
 
         if (!firstName.matches("[a-zA-Z]{5,}")) {
@@ -56,66 +67,146 @@ User user=new User();
             user.setEmail(email);
             user.setPassword(password);
             String result = userDao.save(user);
-            model.addAttribute("Message",result);
+            model.addAttribute("Message", result);
             return "signin.jsp";
         } else {
             model.addAttribute("error", errorMessage.toString());
             return "signup.jsp";
-        } 
-	}
-	
-	@PostMapping("/signin")
-	public String toLogin(HttpSession session ,	@RequestParam("email")String email,@RequestParam("password")String password,Model model) {
-		int count = userDao.loginCredencial(email,password);
-		System.out.println("count"+count);
+        }
+    }
+
+    @PostMapping("/signin")
+    public String toLogin(HttpSession session, @RequestParam("email") String email, @RequestParam("password") String password, Model model) {
+        int count = userDao.loginCredencial(email, password);
+        System.out.println("count" + count);
         if (count > 0) {
-        	System.out.println("inside session");
-        	User users = userDao.getUserDetails(email);
-        	int userid = userDao.getId(email);
+            System.out.println("inside session");
+            User users = userDao.getUserDetails(email);
+            int userid = userDao.getId(email);
+            String name = userDao.getName(email);
             session.setAttribute("user", users);
             session.setAttribute("userid", userid);
+            session.setAttribute("name", name);
             return "header.jsp";
         } else {
             model.addAttribute("error", "Invalid email or password");
             return "signin.jsp";
-        }		
-	}
-	
-	@RequestMapping("/logout")
-	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		HttpSession session = request.getSession();
+        }
+    }
+
+    @RequestMapping("/logout")
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession();
         if (session != null) {
             session.invalidate();
         }
         response.sendRedirect("signin.jsp");
-	}
-	
-	@PostMapping("/UpdateProfile")
-	public String updateUser(HttpSession session, @RequestParam("first-name") String firstName,@RequestParam("last-name") String lastName,@RequestParam("email") String email,@RequestParam("profile-image") Part part,Model model) throws IOException {
-		 int userid = (Integer) session.getAttribute("userid");
-		    if (userid == 0) {
-		        return "signin.jsp";
-		    } 
-		InputStream is=null;
-		byte[] data = null;
-		if(part != null) {
-			is=part.getInputStream();
-			data=new byte[is.available()];
-			is.read(data);
-			 is.close();
-		}
-		user.setFirstName(firstName);
-		user.setLastName(lastName);
-		user.setEmail(email);
-		user.setProfile(data);
-		user.setUserId(userid);
-		System.out.println("user id"+user.getUserId());
-		String  result = userDao.updateUser(user);
-		if(result.equals("updated sucessfully")) {
-			session.setAttribute("alert", result);
-		    return "header.jsp";
-		}
-		model.addAttribute("alert","updation failed");
-		return  "update.jsp";
-	}
+    }
+
+    @PostMapping("/UpdateProfile")
+    public String updateUser(HttpSession session, @RequestParam("first-name") String firstName, @RequestParam("last-name") String lastName, @RequestParam("email") String email, @RequestParam("profile-image") Part part, Model model) throws IOException {
+        int userid = (Integer) session.getAttribute("userid");
+        if (userid == 0) {
+            return "signin.jsp";
+        }
+        InputStream is = null;
+        byte[] data = null;
+        if (part != null) {
+            is = part.getInputStream();
+            data = new byte[is.available()];
+            is.read(data);
+            is.close();
+        }
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setProfile(data);
+        user.setUserId(userid);
+        System.out.println("user id" + user.getUserId());
+        String result = userDao.updateUser(user);
+        if (result.equals("updated successfully")) {
+            session.setAttribute("alert", result);
+            return "header.jsp";
+        }
+        model.addAttribute("alert", "updation failed");
+        return "update.jsp";
+    }
+
+    @PostMapping("/post")
+    public String createPost(@RequestParam("post-content") String content, @RequestParam("post-image") Part part, @RequestParam("userid") int userId, @RequestParam("username") String name) throws IOException {
+        InputStream is = null;
+        byte[] data = null;
+        if (part != null) {
+            is = part.getInputStream();
+            data = new byte[is.available()];
+            is.read(data);
+            is.close();
+        }
+        Post post = new Post();
+        post.setDescription(content);
+        post.setImage(data);
+        post.setUserId(userId);
+        post.setUsername(name);
+        userDao.savePost(post);
+        return "post.jsp";
+    }
+
+    @PostMapping("/deletePost")
+    public String deletePost(@RequestParam("id") String postId, Model model) {
+        if (postId != null) {
+            boolean deleted = false;
+            try {
+                deleted = userDao.deletePost(Integer.parseInt(postId));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            if (deleted) {
+                return "post.jsp";
+            } else {
+                model.addAttribute("error", "Unable to delete the post.");
+                return "post.jsp";
+            }
+        } else {
+            model.addAttribute("error", "Invalid post ID.");
+            return "post.jsp";
+        }
+    }
+
+    @PostMapping("/like")
+    public ResponseEntity<Map<String, Object>> handleLike(@RequestBody String requestBody) {
+        JsonObject jsonObject = JsonParser.parseString(requestBody).getAsJsonObject();
+        int postId = jsonObject.get("postId").getAsInt();
+        int userId = jsonObject.get("userId").getAsInt();
+        boolean liked = false;
+        int likeCount = 0;
+        try {
+            if (userDao.isLikedByUser(postId, userId)) {
+                userDao.removeLike(postId, userId);
+            } else {
+                userDao.addLike(userId, postId);
+                liked = true;
+            }
+            likeCount = userDao.getLikeCount(postId);
+            Map<String, Object> jsonResponse = new HashMap<>();
+            jsonResponse.put("success", true);
+            jsonResponse.put("liked", liked);
+            jsonResponse.put("likeCount", likeCount);
+            return ResponseEntity.ok(jsonResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> jsonResponse = new HashMap<>();
+            jsonResponse.put("success", false);
+            return ResponseEntity.status(500).body(jsonResponse);
+        }
+    }
+
+    @PostMapping("/Comment")
+    public String addComment(@RequestParam("postid") int postId, @RequestParam("userid") int userId, @RequestParam("comment") String comment) {
+        Comment cmt = new Comment();
+        cmt.setComment(comment);
+        cmt.setPostId(postId);
+        cmt.setUserid(userId);
+        userDao.addComment(cmt);
+        return "post.jsp";
+    }
 }

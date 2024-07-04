@@ -4,18 +4,16 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.util.Base64" %>
 <%@ page import="com.chainsys.socialmedia.model.User" %>
-<%@ page import="com.chainsys.socialmedia.dao.*" %>
+<%@ page import="com.chainsys.socialmedia.dao.UserDAO" %>
 <%
-   UserDAO userDAO = new UserDaoImpl();
     String base64Image = "";
     ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-    UserDaoImpl userDaoImpl = (UserDaoImpl) context.getBean("userDaoImpl");
-    User user = userDaoImpl.getUserById((Integer)(session.getAttribute("userid")));
+    UserDAO userDAO = (UserDAO) context.getBean("userDao");
+    User user = userDAO.getUserById((Integer) session.getAttribute("userid"));
     if (user != null && user.getProfile() != null) {
         base64Image = Base64.getEncoder().encodeToString(user.getProfile());
     }
 %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

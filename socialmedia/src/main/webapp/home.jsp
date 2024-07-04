@@ -1,16 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-    <%@ page import="java.util.ArrayList" %>
-    <%@ page import="java.util.List" %>
-<% 
-    PostDAO postDAO = new PostDAO();
-    List<Post> posts = new ArrayList<post>();
+    <%@ page import="java.util.Base64" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="com.chainsys.socialmedia.dao.*" %>
+<%@ page import="com.chainsys.socialmedia.model.Post" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="com.chainsys.socialmedia.model.Comment" %>
+<%@ page import="com.chainsys.socialmedia.model.Like" %>
+<%
+ApplicationContext context1 = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+UserDAO  userDao = (UserDAO) context1.getBean("userDao");
+    List<Post> posts = new ArrayList<>();
     try {
-        posts = postDAO.getAllPosts();
+        posts = userDao.getAllPosts();
     } catch (Exception e) {
         e.printStackTrace();
     }
 %>
+<% 
+        int userId = (int) session.getAttribute("userid");
+        %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -296,24 +306,20 @@ button:hover {
 <body>
 <%@include file="header.jsp" %>
 <div id="posts-container">
-        <% for (Post post : posts) { 
-         try {
-							 LikeDAO likeDAO = new LikeDAO();							
-				int likecount=likeDAO.getLikeCount(post.getId());
+        <% for (Post post : posts) { 						
+				int likecount=userDao.getLikeCount(post.getId());
 				 post.setLikeCount(likecount);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}%>
+		%>
             <div class="posts">
                 <div class="post-title">
                     <div class="post-left">
                         <div class="image">
                             <a href="profile.jsp">
-                                <img src="data:image/jpeg;base64,<%= Base64.getEncoder().encodeToString(userDAO.getUserById(post.getUserid()).getProfile()) %>" alt="Profile">
+                                <img src="data:image/jpeg;base64,<%= Base64.getEncoder().encodeToString(userDao.getUserById(post.getUserId()).getProfile()) %>" alt="Profile">
                             </a>
                         </div>
                         <div class="details">
-                            <p class="name"><%= post.getUsername() %></p>
+                            <p class="name"><%= post.getUserName() %></p>
                             <span class="comment-timestamp"
 					data-timestamp="<%= post.getTimestamp() %>"></span>
                         </div>
@@ -321,7 +327,7 @@ button:hover {
                     <div class="post-right">
                         <i class="fa-solid fa-ellipsis" onclick="toggleDeleteOption(this)"></i>
                         <div class="delete-option" style="display: none;">
-                            <form action="deletePost" method="get">
+                            <form action="deletePost" method="post">
                                 <input type="hidden" name="id" value="<%= post.getId() %>">
                                 <button type="submit">Delete</button>
                             </form>
@@ -340,16 +346,11 @@ button:hover {
 						id="like-count-<%=post.getId()%>" class="like-count-tooltip">
 						<%=post.getLikeCount()%>likes
 						<div class="tooltip-content" id="tooltip-<%= post.getId() %>">
-							<h5>Users who liked this post:</h5>
+							<h5>See who liked this post:</h5>
 							<ul>
-								<%
-								LikeDAO likeDAO = new LikeDAO();
+								<% 
 								List<User> users = null;
-								try {
-									users = likeDAO.getUsersWhoLiked(post.getId());
-								} catch (ClassNotFoundException e) {
-									e.printStackTrace();
-								}
+									 users = userDao.getUsersWhoLiked(post.getId()); 
 								%>
 								<%
 								for (User user1 : users) {
@@ -357,7 +358,7 @@ button:hover {
 								<li><%=user1.getFirstName()%> <%=user1.getLastName()%></li>
 								<%
 								}
-								%>
+								%> 
 							</ul>
 						</div> </span>
 				</div>
@@ -373,24 +374,20 @@ button:hover {
                     <div id="commentsContainer-<%= post.getId() %>">
                         <% 
                         List<Comment> comments = null;
-                        try {
-                            comments = commentDAO.getCommentsByPostId(post.getId());
-                        } catch (ClassNotFoundException e) {
-                            e.printStackTrace();
-                        }
+                            comments = userDao.getCommentsByPostId(post.getId());
                         if (comments != null) {
                             for (Comment comment : comments) {
                         %>
-				<a> <strong><%=new UserDAO().getUserById(comment.getUserid()).getFirstName()%></strong>:
+				<a> <strong><%=userDao.getUserById(comment.getUserId()).getFirstName()%></strong>:
 					<%=comment.getComment()%> <span class="comment-timestamp"
-					data-timestamp="<%= comment.getCreatedat() %>"></span>
+					data-timestamp="<%= comment.getCreatedAt() %>"></span>
 				</a> <br>
 				<%
 				}
 				}
 				%>
                     </div>
-                    <form action="CommentServlet" method="post">
+                    <form action="Comment" method="post">
                         <textarea id="newComment-<%= post.getId() %>" rows="1" name="comment" placeholder="Add a comment..."></textarea>
                         <input type="hidden" name="userid" value="<%= userId %>" /> 
                         <input type="hidden" name="postid" value="<%= post.getId() %>" />
@@ -487,8 +484,7 @@ function toggleLike(postId, userId) {
     const likeButton = document.getElementById('like-button-' + postId);
     const likeCount = document.getElementById('like-count-' + postId);
 
-    // Make an AJAX call to toggle the like
-    fetch('LikeServlet', {
+    fetch('like', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -501,10 +497,9 @@ function toggleLike(postId, userId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Update the like count
+
             likeCount.textContent = data.likeCount;
 
-            // Toggle the like button class
             if (data.liked) {
                 likeButton.classList.remove('fa-regular');
                 likeButton.classList.add('fa-solid');

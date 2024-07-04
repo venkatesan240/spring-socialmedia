@@ -6,12 +6,15 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.chainsys.socialmedia.mapping.CommentRowMapper;
 import com.chainsys.socialmedia.mapping.PostRowMapper;
 import com.chainsys.socialmedia.mapping.UserRowMapper;
+import com.chainsys.socialmedia.mapping.LikeMapper;
+import com.chainsys.socialmedia.model.Comment;
 import com.chainsys.socialmedia.model.Post;
 import com.chainsys.socialmedia.model.User;
 
-@Repository
+@Repository("userDao")
 public class UserDaoImpl implements UserDAO{
 
 	 @Autowired
@@ -19,6 +22,8 @@ public class UserDaoImpl implements UserDAO{
 	 
 	    @Autowired
 	    UserRowMapper ur; 
+	    
+	    CommentRowMapper crm;
 	  
 	    public boolean emailExists(String email) {
 	        String query = "SELECT COUNT(*) FROM user WHERE email = ?";
@@ -89,5 +94,81 @@ public class UserDaoImpl implements UserDAO{
 		public List<Post> getAllPosts() {
 			String query = "SELECT id,user_id,user_name,description,image,timestamp FROM posts";
 			return jdbcTemplate.query(query,new PostRowMapper());			
+		}
+
+		@Override
+		public boolean deletePost(int postId) {
+			 String sql = "DELETE FROM posts WHERE id = ?";
+		        int rowsAffected = jdbcTemplate.update(sql, postId);
+		        return rowsAffected > 0;
+		}
+
+		@Override
+		public void addComment(Comment comment) {
+			 String query = "INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)";
+			 Object[] params= {comment.getPostId(),comment.getUserId(),comment.getComment()};
+			 jdbcTemplate.update(query, params);
+		}
+
+		@Override
+		public List<Comment> getCommentsByPostId(int postId) {
+			String query = "SELECT * FROM comments WHERE post_id = ?";
+			return jdbcTemplate.query(query,new CommentRowMapper() ,new Object[]{postId});
+		}
+
+		@Override
+		public void addLike(int userId, int postId) {
+			String query = "INSERT INTO likes (user_id, post_id) VALUES (?, ?)";
+			 try {
+		            jdbcTemplate.update(query, userId, postId);
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+		}
+
+		@Override
+		public void removeLike(int postId, int userId) {
+			String query = "DELETE FROM likes WHERE user_id = ? AND post_id = ?";
+			try {
+	            jdbcTemplate.update(query, userId, postId);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+		}
+
+		@Override
+		public int getLikeCount(int postId) {
+			String query = "SELECT COUNT(*) AS like_count FROM likes WHERE post_id = ?";
+			 try {
+		            return jdbcTemplate.queryForObject(query, new Object[]{postId}, Integer.class);
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		            return 0;
+		        }
+		}
+
+		@Override
+		public boolean isLikedByUser(int postId, int userId) {
+			String query = "SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ?";
+			try {
+	            Integer count = jdbcTemplate.queryForObject(query, new Object[]{userId, postId}, Integer.class);
+	            return count != null && count > 0;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+		}
+
+		@Override
+		public String getName(String email) {
+			String query="select first_name from user where email=?";
+			Object[] params= {email};
+			return jdbcTemplate.queryForObject(query, params, String.class); 
+		}
+
+		@Override
+		public List<User> getUsersWhoLiked(int postId) {
+			final String SELECT_USERS_WHO_LIKED = "SELECT u.user_id, u.first_name, u.last_name, u.profile FROM likes l INNER JOIN user u ON l.user_id = u.user_id WHERE l.post_id = ?";
+	        return jdbcTemplate.query(SELECT_USERS_WHO_LIKED, new Object[]{postId}, new LikeMapper());
 		}
 }

@@ -19,5 +19,4 @@ public class UserRowMapper implements RowMapper<User>{
          user.setProfile(rs.getBytes("profile"));
          return user;
 	}
-
 }

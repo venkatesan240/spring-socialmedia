@@ -6,11 +6,10 @@
 <%@ page import="com.chainsys.socialmedia.model.User" %>
 <%@ page import="com.chainsys.socialmedia.dao.*" %>
 <%
-    UserDAO userDAO = new UserDaoImpl();
-    String base64Image = "";
+	String base64Image = "";
     ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-    UserDaoImpl userDaoImpl = (UserDaoImpl) context.getBean("userDaoImpl");
-    User user = userDaoImpl.getUserById((Integer)(session.getAttribute("userid")));
+    UserDAO userDao = (UserDAO) context.getBean("userDao");
+    User user = userDao.getUserById((Integer)(session.getAttribute("userid")));
     if (user != null && user.getProfile() != null) {
         base64Image = Base64.getEncoder().encodeToString(user.getProfile());
     }
