@@ -226,12 +226,14 @@ public class UserController {
 		msg.setReceiverId(receiverId);
 		msg.setMessage(message);
 		userDao.insertMessage(msg);
-		return message;
+		return "viewmessage.jsp";
     }
     
-    public String deleteMessage(@RequestParam("deleteChat") int id) {
+    @RequestMapping("/deleteChat")
+    public String deleteMessage(@RequestParam("delete") int id) {
     	userDao.deleteMessage(id);
-		return null;
+    	System.out.println("deleted sucessfully");
+		return "viewmessage.jsp";
     	
     }
         

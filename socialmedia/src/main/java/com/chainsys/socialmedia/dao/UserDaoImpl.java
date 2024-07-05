@@ -197,7 +197,7 @@ public class UserDaoImpl implements UserDAO{
 
 		@Override
 		public void deleteMessage(int chatId) {
-			String query="DELETE FROM message WHERE id = ?";
+			String query="DELETE FROM messages WHERE id = ?";
 			Object[] param= {chatId};
 			jdbcTemplate.update(query, param);
 		}

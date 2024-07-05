@@ -111,7 +111,7 @@ List<Message> messages = new ArrayList<>();
         <div class="input_msg_write d-flex">
             <input type="hidden" name="senderId" value="<%= session.getAttribute("userid") %>" />
             <input type="hidden" name="receiverId" value="<%= receiverId %>" />
-            <input type="text" name="message" class="write_msg" placeholder="Type a message" required />
+            <input type="text" name="message" class="write_msg" placeholder="Type a message" required pattern="^[a-zA-Z0-9\s]+$" title="Message should only contain letters, numbers, and spaces."/>
             <button class="msg_send_btn ml-2" type="submit">
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
