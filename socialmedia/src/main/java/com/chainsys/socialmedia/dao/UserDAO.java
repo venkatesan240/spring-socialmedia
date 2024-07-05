@@ -1,9 +1,11 @@
 package com.chainsys.socialmedia.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.chainsys.socialmedia.model.Comment;
+import com.chainsys.socialmedia.model.Message;
 import com.chainsys.socialmedia.model.Post;
 import com.chainsys.socialmedia.model.User;
 
@@ -27,4 +29,8 @@ public interface UserDAO {
 	public int getLikeCount(int postId);
 	public boolean isLikedByUser(int postId,int userId);
 	public List<User> getUsersWhoLiked(int postId);
+	public List<User> selectUsers();
+	public List<Message> getMessage(Message message);
+	public void deleteMessage(int chatId);
+	void insertMessage(Message message);
 }

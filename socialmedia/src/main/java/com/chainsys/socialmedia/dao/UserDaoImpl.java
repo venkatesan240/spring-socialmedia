@@ -1,4 +1,5 @@
 package com.chainsys.socialmedia.dao;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,11 +7,13 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.chainsys.socialmedia.mapping.CommentRowMapper;
-import com.chainsys.socialmedia.mapping.PostRowMapper;
-import com.chainsys.socialmedia.mapping.UserRowMapper;
+import com.chainsys.socialmedia.mapping.CommentMapper;
 import com.chainsys.socialmedia.mapping.LikeMapper;
+import com.chainsys.socialmedia.mapping.UserMapper;
+import com.chainsys.socialmedia.mapping.PostMapper;
+import com.chainsys.socialmedia.mapping.MessageMapper;
 import com.chainsys.socialmedia.model.Comment;
+import com.chainsys.socialmedia.model.Message;
 import com.chainsys.socialmedia.model.Post;
 import com.chainsys.socialmedia.model.User;
 
@@ -21,9 +24,9 @@ public class UserDaoImpl implements UserDAO{
 	    JdbcTemplate  jdbcTemplate;
 	 
 	    @Autowired
-	    UserRowMapper ur; 
+	    UserMapper ur; 
 	    
-	    CommentRowMapper crm;
+	    CommentMapper crm;
 	  
 	    public boolean emailExists(String email) {
 	        String query = "SELECT COUNT(*) FROM user WHERE email = ?";
@@ -93,7 +96,7 @@ public class UserDaoImpl implements UserDAO{
 		@Override
 		public List<Post> getAllPosts() {
 			String query = "SELECT id,user_id,user_name,description,image,timestamp FROM posts";
-			return jdbcTemplate.query(query,new PostRowMapper());			
+			return jdbcTemplate.query(query,new PostMapper());			
 		}
 
 		@Override
@@ -113,7 +116,7 @@ public class UserDaoImpl implements UserDAO{
 		@Override
 		public List<Comment> getCommentsByPostId(int postId) {
 			String query = "SELECT * FROM comments WHERE post_id = ?";
-			return jdbcTemplate.query(query,new CommentRowMapper() ,new Object[]{postId});
+			return jdbcTemplate.query(query,new CommentMapper() ,new Object[]{postId});
 		}
 
 		@Override
@@ -171,4 +174,33 @@ public class UserDaoImpl implements UserDAO{
 			final String SELECT_USERS_WHO_LIKED = "SELECT u.user_id, u.first_name, u.last_name, u.profile FROM likes l INNER JOIN user u ON l.user_id = u.user_id WHERE l.post_id = ?";
 	        return jdbcTemplate.query(SELECT_USERS_WHO_LIKED, new Object[]{postId}, new LikeMapper());
 		}
+
+		@Override
+		public List<User> selectUsers() {
+			 String query = "SELECT user_id, first_name,last_name,profile FROM user";
+			return jdbcTemplate.query(query,new LikeMapper() );
+		}
+
+		@Override
+		public void insertMessage(Message message) {
+			 String query = "INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)";
+			 Object[] param= {message.getSenderId(),message.getReceiverId(),message.getMessage()};
+			 jdbcTemplate.update(query,param);			
+		}
+
+		@Override
+		public List<Message> getMessage(Message message) {
+			String query = "SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (receiver_id = ? AND sender_id = ?) ORDER BY timestamp";
+			Object[] param= {message.getSenderId(),message.getReceiverId(),message.getSenderId(),message.getReceiverId()};
+			return 	jdbcTemplate.query(query, param, new MessageMapper());	
+		}
+
+		@Override
+		public void deleteMessage(int chatId) {
+			String query="DELETE FROM message WHERE id = ?";
+			Object[] param= {chatId};
+			jdbcTemplate.update(query, param);
+		}
+
+		
 }

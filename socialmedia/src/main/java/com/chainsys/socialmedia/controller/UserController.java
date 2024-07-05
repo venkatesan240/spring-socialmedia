@@ -3,6 +3,7 @@ package com.chainsys.socialmedia.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.chainsys.socialmedia.dao.UserDAO;
 import com.chainsys.socialmedia.model.Comment;
+import com.chainsys.socialmedia.model.Message;
 import com.chainsys.socialmedia.model.Post;
 import com.chainsys.socialmedia.model.User;
 import com.google.gson.JsonObject;
@@ -209,4 +211,28 @@ public class UserController {
         userDao.addComment(cmt);
         return "post.jsp";
     }
+    
+    @RequestMapping("/userlist")
+    public String getUserList(Model model) {
+    	List<User> selectUsers = userDao.selectUsers();
+    	model.addAttribute("users",selectUsers);
+		return "chat.jsp";
+    }
+    
+    @PostMapping("/Chat")
+    public String addMessage(@RequestParam("senderId") int senderId,@RequestParam("receiverId") int receiverId,@RequestParam("message") String message) {
+    	Message msg=new Message();
+		msg.setSenderId(senderId);
+		msg.setReceiverId(receiverId);
+		msg.setMessage(message);
+		userDao.insertMessage(msg);
+		return message;
+    }
+    
+    public String deleteMessage(@RequestParam("deleteChat") int id) {
+    	userDao.deleteMessage(id);
+		return null;
+    	
+    }
+        
 }

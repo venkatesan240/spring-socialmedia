@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.chainsys.socialmedia.model.Post;
 
-public class PostRowMapper implements RowMapper<Post> {
+public class PostMapper implements RowMapper<Post> {
 	
 	public Post mapRow(ResultSet rs, int rowNum) throws SQLException {
 		Post post=new Post();
