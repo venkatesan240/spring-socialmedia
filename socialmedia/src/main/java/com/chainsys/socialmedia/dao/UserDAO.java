@@ -1,6 +1,4 @@
 package com.chainsys.socialmedia.dao;
-
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
@@ -31,6 +29,8 @@ public interface UserDAO {
 	public List<User> getUsersWhoLiked(int postId);
 	public List<User> selectUsers();
 	public List<Message> getMessage(Message message);
-	public void deleteMessage(int chatId);
-	void insertMessage(Message message);
+	public boolean deleteMessage(int messageId);
+	public void insertMessage(Message message);
+	public List<User> getUsers();
+	public void addToUser();
 }

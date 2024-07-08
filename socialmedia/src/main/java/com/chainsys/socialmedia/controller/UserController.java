@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.chainsys.socialmedia.dao.UserDAO;
 import com.chainsys.socialmedia.model.Comment;
@@ -89,7 +91,12 @@ public class UserController {
             session.setAttribute("user", users);
             session.setAttribute("userid", userid);
             session.setAttribute("name", name);
-            return "header.jsp";
+            if(email.endsWith("@connect.com")){
+            	userDao.addToUser();
+            	return "admin.jsp";
+            }else {
+            	return "home.jsp";
+            }
         } else {
             model.addAttribute("error", "Invalid email or password");
             return "signin.jsp";
@@ -131,7 +138,7 @@ public class UserController {
             return "header.jsp";
         }
         model.addAttribute("alert", "updation failed");
-        return "update.jsp";
+        return "profile.jsp";
     }
 
     @PostMapping("/post")
@@ -220,21 +227,36 @@ public class UserController {
     }
     
     @PostMapping("/Chat")
-    public String addMessage(@RequestParam("senderId") int senderId,@RequestParam("receiverId") int receiverId,@RequestParam("message") String message) {
+    public String addMessage(@RequestParam("senderId") int senderId,@RequestParam("receiverId") int receiverId,@RequestParam("message") String message,Model model) {
     	Message msg=new Message();
 		msg.setSenderId(senderId);
 		msg.setReceiverId(receiverId);
 		msg.setMessage(message);
 		userDao.insertMessage(msg);
+		model.addAttribute("receiverId", receiverId); 
 		return "viewmessage.jsp";
     }
     
-    @RequestMapping("/deleteChat")
-    public String deleteMessage(@RequestParam("delete") int id) {
-    	userDao.deleteMessage(id);
-    	System.out.println("deleted sucessfully");
+    @GetMapping("/deleteChat")
+    public String deleteChat( @RequestParam("delete") int messageId,@RequestParam("id") int id,
+                             Model model) {
+            boolean success = userDao.deleteMessage(messageId);
+            if (success) {
+                model.addAttribute("status", "success");
+                model.addAttribute("receiverId", id);
+                
+            } else {
+                model.addAttribute("status", "error");
+            }
+        return "/viewmessage";
+    }
+    
+    @GetMapping("/viewmessage")
+    public String getViewMessage(HttpServletRequest request, Model model) {
+		int receiverId =Integer.parseInt(request.getParameter("receiverId"));
+    	model.addAttribute("receiverId", receiverId);  	
+    	System.out.println("receiverId---->"+receiverId);
 		return "viewmessage.jsp";
-    	
     }
         
 }

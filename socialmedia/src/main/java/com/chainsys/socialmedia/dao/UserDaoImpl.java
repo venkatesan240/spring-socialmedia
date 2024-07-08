@@ -1,5 +1,4 @@
 package com.chainsys.socialmedia.dao;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -196,11 +195,23 @@ public class UserDaoImpl implements UserDAO{
 		}
 
 		@Override
-		public void deleteMessage(int chatId) {
+		public boolean deleteMessage(int messageId) {
 			String query="DELETE FROM messages WHERE id = ?";
-			Object[] param= {chatId};
+			Object[] param= {messageId};
 			jdbcTemplate.update(query, param);
+			return  true;
+		}
+		
+		public List<User> getUsers() {
+			String query="select * from user where is_active=0";
+			return  jdbcTemplate.query(query, new UserMapper());
 		}
 
+		@Override
+		public void addToUser() {
+			String query="UPDATE user SET is_active = 1	WHERE email LIKE '%@connect.com'";
+			jdbcTemplate.update(query);		
+		}
+		
 		
 }

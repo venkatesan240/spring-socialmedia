@@ -92,7 +92,7 @@ body {
                     for (User user1 : users) {
                         if (user1.getUserId()!=currentUserId) {
             %>
-            <div class="card" onclick="javascript:window.location='viewmessage.jsp?receiverId=<%= user1.getUserId() %>';">
+            <div class="card" onclick="javascript:window.location='${pageContext.request.contextPath}/viewmessage?receiverId=<%= user1.getUserId() %>';">
                 <div class="card-body">
 					<div class="profile">
 						 <span><%=user1.getFirstName() %><%=user1.getLastName() %></span>
