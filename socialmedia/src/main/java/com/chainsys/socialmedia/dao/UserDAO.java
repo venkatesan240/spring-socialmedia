@@ -6,6 +6,7 @@ import com.chainsys.socialmedia.model.Comment;
 import com.chainsys.socialmedia.model.Message;
 import com.chainsys.socialmedia.model.Post;
 import com.chainsys.socialmedia.model.User;
+import com.chainsys.socialmedia.model.UserReport;
 
 @Repository
 public interface UserDAO {
@@ -33,4 +34,7 @@ public interface UserDAO {
 	public void insertMessage(Message message);
 	public List<User> getUsers();
 	public void addToUser();
+	public void insertReport(int reportedId,String reason,int senderId);
+	public List<UserReport> getReport();
+	public void deleteUser(int userId);
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.chainsys.socialmedia.dao.UserDAO;
 import com.chainsys.socialmedia.model.Comment;
@@ -82,9 +82,7 @@ public class UserController {
     @PostMapping("/signin")
     public String toLogin(HttpSession session, @RequestParam("email") String email, @RequestParam("password") String password, Model model) {
         int count = userDao.loginCredencial(email, password);
-        System.out.println("count" + count);
         if (count > 0) {
-            System.out.println("inside session");
             User users = userDao.getUserDetails(email);
             int userid = userDao.getId(email);
             String name = userDao.getName(email);
@@ -93,7 +91,7 @@ public class UserController {
             session.setAttribute("name", name);
             if(email.endsWith("@connect.com")){
             	userDao.addToUser();
-            	return "admin.jsp";
+            	return "adminmain.jsp";
             }else {
             	return "home.jsp";
             }
@@ -131,7 +129,6 @@ public class UserController {
         user.setEmail(email);
         user.setProfile(data);
         user.setUserId(userid);
-        System.out.println("user id" + user.getUserId());
         String result = userDao.updateUser(user);
         if (result.equals("updated successfully")) {
             session.setAttribute("alert", result);
@@ -234,29 +231,41 @@ public class UserController {
 		msg.setMessage(message);
 		userDao.insertMessage(msg);
 		model.addAttribute("receiverId", receiverId); 
-		return "viewmessage.jsp";
+		return "viewmessage.jsp?";
     }
     
     @GetMapping("/deleteChat")
     public String deleteChat( @RequestParam("delete") int messageId,@RequestParam("id") int id,
                              Model model) {
-            boolean success = userDao.deleteMessage(messageId);
-            if (success) {
-                model.addAttribute("status", "success");
-                model.addAttribute("receiverId", id);
-                
-            } else {
-                model.addAttribute("status", "error");
-            }
-        return "/viewmessage";
+            boolean success = userDao.deleteMessage(messageId);			
+			  if (success) { model.addAttribute("status", "success");
+			  model.addAttribute("receiverId", id);
+			  
+			  } else { model.addAttribute("status", "error"); }
+        return "redirect:/viewmessage?receiverId="+id;
     }
     
     @GetMapping("/viewmessage")
     public String getViewMessage(HttpServletRequest request, Model model) {
 		int receiverId =Integer.parseInt(request.getParameter("receiverId"));
     	model.addAttribute("receiverId", receiverId);  	
-    	System.out.println("receiverId---->"+receiverId);
+//    	System.out.println("receiverId---->"+receiverId);
 		return "viewmessage.jsp";
     }
-        
+    
+    @PostMapping("/reportUser")
+    public ResponseEntity<String> reportUser(@RequestBody String requestBody) {
+        JsonObject jsonObject = JsonParser.parseString(requestBody).getAsJsonObject();
+        int reportedId = jsonObject.get("reportedId").getAsInt();
+        String reason = jsonObject.get("reason").getAsString();
+        int senderId=jsonObject.get("senderId").getAsInt();
+        userDao.insertReport(reportedId, reason,senderId);
+        return new ResponseEntity<>("User reported successfully", HttpStatus.OK);
+    }
+    
+    @PostMapping("/delete")
+    public String toDeleteUser(@RequestParam("userid") int userId) {
+    	userDao.deleteUser(userId);
+		return "admin.jsp";		
+	} 
 }

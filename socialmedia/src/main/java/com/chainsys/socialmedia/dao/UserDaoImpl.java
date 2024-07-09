@@ -11,10 +11,12 @@ import com.chainsys.socialmedia.mapping.LikeMapper;
 import com.chainsys.socialmedia.mapping.UserMapper;
 import com.chainsys.socialmedia.mapping.PostMapper;
 import com.chainsys.socialmedia.mapping.MessageMapper;
+import com.chainsys.socialmedia.mapping.ReportMapper;
 import com.chainsys.socialmedia.model.Comment;
 import com.chainsys.socialmedia.model.Message;
 import com.chainsys.socialmedia.model.Post;
 import com.chainsys.socialmedia.model.User;
+import com.chainsys.socialmedia.model.UserReport;
 
 @Repository("userDao")
 public class UserDaoImpl implements UserDAO{
@@ -28,7 +30,7 @@ public class UserDaoImpl implements UserDAO{
 	    CommentMapper crm;
 	  
 	    public boolean emailExists(String email) {
-	        String query = "SELECT COUNT(*) FROM user WHERE email = ?";
+	        String query = "SELECT COUNT(*) FROM user WHERE email = ? AND is_deleted = 0";
 	        Integer count = jdbcTemplate.queryForObject(query, new Object[]{email}, Integer.class);
 	        return count != null && count > 0;
 	    }
@@ -46,7 +48,7 @@ public class UserDaoImpl implements UserDAO{
 
 		@Override
 		public int loginCredencial(String email,String password) {
-			String query = "SELECT COUNT(*) FROM user WHERE email = ? AND password = ?";
+			String query = "SELECT COUNT(*) FROM user WHERE email = ? AND password = ? AND is_deleted = 0";
 			Object[] params= {email,password};
 			 try {
 		            Integer count = jdbcTemplate.queryForObject(query, params, Integer.class);
@@ -58,7 +60,7 @@ public class UserDaoImpl implements UserDAO{
 
 		@Override
 		public User getUserDetails(String email) {
-			String query="select * from user where email=?";
+			String query="select * from user where email=? AND is_deleted = 0";
 			Object[] params= {email};
 			return jdbcTemplate.queryForObject(query,params,ur);
 		}
@@ -73,14 +75,14 @@ public class UserDaoImpl implements UserDAO{
 
 		@Override
 		public int getId(String email) {
-			String query="select user_id from user where email=?";
+			String query="select user_id from user where email=? AND is_deleted = 0";
 			Object[] params= {email};
 			return jdbcTemplate.queryForObject(query, params, Integer.class);
 		}
 
 		@Override
 		public User getUserById(int id) {
-			String query="select * from user where user_id=?";
+			String query="select * from user where user_id=? AND is_deleted = 0";
 			Object[] params= {id};
 			return jdbcTemplate.queryForObject(query,params,ur);
 		}
@@ -163,7 +165,7 @@ public class UserDaoImpl implements UserDAO{
 
 		@Override
 		public String getName(String email) {
-			String query="select first_name from user where email=?";
+			String query="select first_name from user where email=? AND is_deleted = 0";
 			Object[] params= {email};
 			return jdbcTemplate.queryForObject(query, params, String.class); 
 		}
@@ -176,7 +178,7 @@ public class UserDaoImpl implements UserDAO{
 
 		@Override
 		public List<User> selectUsers() {
-			 String query = "SELECT user_id, first_name,last_name,profile FROM user";
+			 String query = "SELECT user_id, first_name,last_name,profile FROM user where  is_deleted = 0";
 			return jdbcTemplate.query(query,new LikeMapper() );
 		}
 
@@ -212,6 +214,23 @@ public class UserDaoImpl implements UserDAO{
 			String query="UPDATE user SET is_active = 1	WHERE email LIKE '%@connect.com'";
 			jdbcTemplate.update(query);		
 		}
+
+		@Override
+		public void insertReport(int reportedId,String reason,int senderId) {
+			String query="insert into reports(sender_id,reason,reported_id)values(?,?,?)";
+			Object[] param= {senderId,reason,reportedId};
+			jdbcTemplate.update(query, param);
+		}
+
+		@Override
+		public List<UserReport> getReport() {
+			String query="select id,sender_id,reported_id,report_date,reason from reports";
+			return jdbcTemplate.query(query, new ReportMapper());
+		}		
 		
-		
+		public void deleteUser(int userId) {
+			String query="update user set is_deleted=1 where user_id=?";
+			Object[] param= {userId};
+			jdbcTemplate.update(query, param);
+		}
 }

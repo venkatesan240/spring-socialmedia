@@ -8,7 +8,7 @@
 String base64Image1 = "";
 int senderId = Integer.parseInt(session.getAttribute("userid").toString());
 int receiverId = (int)request.getAttribute("receiverId");
-System.out.println(receiverId);ApplicationContext context1 = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+ApplicationContext context1 = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 UserDAO userDao = (UserDAO) context1.getBean("userDao");
 User user1 = userDao.getUserById(receiverId);
 if (user1 != null && user1.getProfile() != null) {
@@ -104,40 +104,57 @@ List<Message> messages = new ArrayList<>();
 }
 
 .menu {
-    position: relative;
-    
-}
-
-.menu .fa-ellipsis-v {
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    background-color: #fff;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    overflow: hidden;
-    min-width: 160px;
-    z-index: 1000;
-}
-
-.dropdown-menu a {
-    display: block;
-    padding: 12px 20px;
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.dropdown-menu a:hover {
-    background-color: #ff9800;
-    color: #fff;
-}
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-menu a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+        .popup input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        .popup button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .popup button:hover {
+            background-color: #45a049;
+        }
+        .popup .close-btn {
+            background-color: red;
+        }
 </style>
 </head>
 <body>
@@ -149,14 +166,22 @@ List<Message> messages = new ArrayList<>();
 				<span class="name"><%= user1.getFirstName() %><%= user1.getLastName() %></span>
 			</div>
 			<div class="menu">
-				<i class="fa fa-ellipsis-v" style="padding-right: 20px;" onclick="toggleMenu(this)"></i>
+				<i class="fa fa-ellipsis-v" style="padding-right: 20px;"
+					onclick="toggleMenu(this)"></i>
 				<div class="dropdown-menu">
-					<a href="#" onclick="reportUser()">Report</a>
+					<a href="#" onclick="showPopup(<%= user1.getUserId() %>)">Report</a>
 				</div>
 			</div>
+			<div id="reportPopup" class="popup">
+				<h2>Report User</h2>
+				<input type="text" id="reportReason"
+					placeholder="Enter reason for report">
+					<input type="hidden" id="senderId" value="<%= senderId %>">
+				<button onclick="submitReport()">Submit</button>
+				<button class="close-btn" onclick="closePopup()">Close</button>
+			</div>
 		</div>
-	<div class="container">
-		
+	<div class="container">		
 		<%
         if (messages != null && messages.size() == 0) {
     %>
@@ -246,9 +271,60 @@ function toggleMenu(element) {
     dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
 }
 
-function reportUser() {
-    alert('User reported');
-    // Implement your report user functionality here
+function showPopup(userId) {
+    document.getElementById('reportPopup').style.display = 'block';
+    document.getElementById('reportPopup').setAttribute('data-user-id', userId);
+}
+
+function closePopup() {
+    document.getElementById('reportPopup').style.display = 'none';
+}
+
+function submitReport() {
+    const reportUrl = '/reportUser'; // Replace with your actual endpoint
+    const reportedId = document.getElementById('reportPopup').getAttribute('data-user-id');
+    const reason = document.getElementById('reportReason').value;
+    const senderId = document.getElementById('senderId').value;
+
+    // Create the request payload
+    const payload = {
+    	reportedId: reportedId,
+        reason: reason,
+        senderId: senderId
+    };
+    // Send the POST request to the controller
+    fetch(reportUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('User reported successfully');
+            closePopup();
+        } else {
+            throw new Error('Failed to report user');
+        }
+    })
+    .catch(error => {
+        alert(`Error: Failed to report user`);
+    });}
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+    if (!event.target.matches('.fa-ellipsis-v')) {
+        var dropdowns = document.getElementsByClassName("dropdown-menu");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.style.display === "block") {
+                openDropdown.style.display = "none";
+            }
+        }
+    }
+    if (event.target == document.getElementById('reportPopup')) {
+        closePopup();
+    }
 }
 </script>
 </body>

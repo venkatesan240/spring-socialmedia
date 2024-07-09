@@ -21,7 +21,6 @@ body {
     background-color: #f5f5f5;
 }
 
-/* Header and navigation */
 header {
     background-color: #333;
     padding: 10px 0;
@@ -127,9 +126,8 @@ input[type="submit"]:hover {
                     <td><%= user.getFirstName() %></td>
                     <td><%= user.getEmail() %></td>
                     <td>
-                        <form action="Example1" method="post">
-                       <input type="hidden" name="email" value="<%= user.getEmail() %>">
-                       <input type="hidden" value="delete" name="action">
+                        <form action="delete" method="post">
+                       <input type="hidden" name="userid" value="<%= user.getUserId() %>">
                        <input type="submit" value="delete">
                    </form>
                     </td>
