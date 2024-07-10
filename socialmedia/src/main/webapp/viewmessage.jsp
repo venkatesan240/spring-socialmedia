@@ -82,7 +82,7 @@ List<Message> messages = new ArrayList<>();
     border-bottom: 1px solid #ddd;
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1;
 }
 
 .profile {

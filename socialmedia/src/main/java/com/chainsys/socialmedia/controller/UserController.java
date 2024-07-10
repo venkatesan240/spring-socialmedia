@@ -259,13 +259,20 @@ public class UserController {
         int reportedId = jsonObject.get("reportedId").getAsInt();
         String reason = jsonObject.get("reason").getAsString();
         int senderId=jsonObject.get("senderId").getAsInt();
-        userDao.insertReport(reportedId, reason,senderId);
-        return new ResponseEntity<>("User reported successfully", HttpStatus.OK);
+        Message message=userDao.getReportedMessage(senderId,reportedId);
+        if(message != null) {
+        	String msg=message.getMessage();
+            userDao.insertReport(reportedId, reason,senderId,msg);
+            return new ResponseEntity<>("User reported successfully", HttpStatus.OK);
+        }
+		return ResponseEntity.status(HttpStatus.NOT_FOUND) .body("Message not found or you are not authorized to report this user");
+        
     }
     
     @PostMapping("/delete")
-    public String toDeleteUser(@RequestParam("userid") int userId) {
+    public String toDeleteUser(@RequestParam("userid") int userId, Model model) {
     	userDao.deleteUser(userId);
-		return "admin.jsp";		
+    	model.addAttribute("isblocked","true");
+		return "admin.jsp"; 
 	} 
 }

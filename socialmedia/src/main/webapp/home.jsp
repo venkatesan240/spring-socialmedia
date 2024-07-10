@@ -27,7 +27,13 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
 <style>
-.posts {
+body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+        }
+        .posts {
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -35,6 +41,7 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
             margin: auto;
             margin-bottom: 20px;
             overflow: hidden;
+            margin-top:15px;
         }
         .post-title {
             display: flex;
@@ -47,8 +54,17 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
             display: flex;
             align-items: center;
         }
-        .image img {
+        .image {
+            width: 50px;
+            height: 50px;
+            overflow: hidden;
             border-radius: 50%;
+            margin-right: 15px;
+        }
+        .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .details {
             margin-left: 10px;
@@ -57,7 +73,7 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
             font-weight: bold;
             margin: 0;
         }
-        .details .location {
+        .details .timestamp {
             color: #777;
             margin: 0;
             font-size: 0.9em;
@@ -65,18 +81,16 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
         .post-content {
             text-align: center;
         }
-        .post-content p{
-        text-align:left;
-        padding-left:10px;
+        .post-content img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 5px;
         }
-       /* Ensure the image within the post-content class maintains its aspect ratio and does not become oval */
-.post-content img {
-    width: 100%;  /* Make the image take the full width of its container */
-    height: auto; /* Maintain the aspect ratio */
-    display: block; /* Ensure there's no extra space below the image */
-    border-radius: 0; /* Remove any border-radius if applied */
-}
-       
+        .post-content p {
+            text-align: left;
+            padding-left: 10px;
+        }
         .post-footer {
             display: flex;
             justify-content: space-between;
@@ -88,8 +102,11 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
             margin-right: 15px;
             cursor: pointer;
         }
-        .save i {
-            cursor: pointer;
+        .like-share-commant i:hover {
+            color: #ff4081;
+        }
+        .like-share-commant .liked i {
+            color: #ff4081;
         }
         .add-comment {
             display: flex;
@@ -117,71 +134,54 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
             color: #007bff;
             cursor: pointer;
         }
-       /*  likes */
-        .like-button {
+        .post-right {
+            position: relative;
+            display: inline-block;
+        }
+        .post-right i {
             cursor: pointer;
+            font-size: 20px;
+            color: #333;
         }
-        .like-button .fa-heart {
-            color: #ccc; /* Default color */
-           transition: color 0.3s; 
+        .delete-option {
+            position: absolute;
+            top: 20px;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            z-index: 1000;
         }
-        .like-button .fa-heart:hover {
-            color: #ff4081; /* Change color on hover */
+        .delete-option button {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
         }
-        .like-button .liked .fa-heart {
-            color: #ff4081; /* Color when liked */
-        }	 
-       /* Post Right Styles */
-.post-right {
-    position: relative;
-    display: inline-block;
-}
-
-.post-right i {
-    cursor: pointer;
-    font-size: 20px;
-    color: #333;
-}
-
-.delete-option {
-    position: absolute;
-    top: 20px;
-    right: 0;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    border-radius: 4px;
-    z-index: 1000;
-}
-
-.delete-option button {
-    background-color: #e74c3c;
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-.delete-option button:hover {
-    background-color: #c0392b;
-}
-/* Updated CSS for profile image in posts */
-.posts .image {
-    width: 50px; /* Adjust as needed */
-    height: 50px; /* Adjust as needed */
-    overflow: hidden;
-    border-radius: 50%;
-    margin-right: 15px; /* Adjust spacing as needed */
-}
-
-.posts .image img {
+        .delete-option button:hover {
+            background-color: #c0392b;
+        }
+       /* Modal container */
+.modal {
+  /*   display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0; */
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    justify-content: center;  /* Center horizontally */
+    align-items: center;  /* Center vertically */
+    display: flex;
 }
+
 /* Modal content */
 .modal-content {
     background-color: #fefefe;
@@ -191,7 +191,11 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
     max-width: 500px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    position: relative; /* To position the close button correctly */
+    position: relative;
+    position:absolute;
+    left:400px;
+    top:140px;
+     /* To position the close button correctly */
 }
 
 /* Close button */

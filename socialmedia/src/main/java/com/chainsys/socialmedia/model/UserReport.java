@@ -7,7 +7,14 @@ public class UserReport {
     private int reportedId;
     private String reportDate;
     private String reason;
+    private String content;
     
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
 	public int getId() {
 		return id;
 	}

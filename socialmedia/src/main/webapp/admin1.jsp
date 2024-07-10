@@ -2,6 +2,7 @@
 <%@page import="org.springframework.context.ApplicationContext"%>
 <%@ page import="com.chainsys.socialmedia.dao.UserDAO" %>
 <%@ page import="com.chainsys.socialmedia.model.UserReport" %>
+<%@ page import="com.chainsys.socialmedia.model.Message" %>
 <%@ page import="java.util.List" %>
 <%
 ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
@@ -61,9 +62,25 @@ input[type="submit"] {
 input[type="submit"]:hover {
     background-color: #e68a00;
 }
+ .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #333;
+            color: #f2f2f2;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .back-button:hover {
+            background-color: #ddd;
+            color: black;
+        }
 </style>
 </head>
 <body>
+<a href="adminmain.jsp" class="back-button">Back</a>
 	<table>
         <thead>
             <tr>
@@ -72,6 +89,7 @@ input[type="submit"]:hover {
                 <th>reportedId</th>
                 <th>report date</th>
                  <th>reason</th>
+                 <th>content</th>
             </tr>
         </thead>
         <tbody>
@@ -85,6 +103,7 @@ input[type="submit"]:hover {
         	<td><%= user.getReportedId() %></td>
         	<td><%= user.getReportDate() %></td>
         	<td><%= user.getReason() %></td>
+        	<td><%= user.getContent() %></td>
         </tr>  
         <%} %>      
         </tbody>

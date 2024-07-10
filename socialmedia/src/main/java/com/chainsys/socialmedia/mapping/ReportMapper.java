@@ -17,6 +17,7 @@ public class ReportMapper implements RowMapper<UserReport> {
 		userReport.setReportedId(rs.getInt("reported_id"));
 		userReport.setReportDate(rs.getString("report_date"));
 		userReport.setReason(rs.getString("reason"));
+		userReport.setContent(rs.getString("content"));
 		return userReport;
 	}
 

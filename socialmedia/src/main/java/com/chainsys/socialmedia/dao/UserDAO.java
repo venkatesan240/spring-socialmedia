@@ -34,7 +34,8 @@ public interface UserDAO {
 	public void insertMessage(Message message);
 	public List<User> getUsers();
 	public void addToUser();
-	public void insertReport(int reportedId,String reason,int senderId);
+	public void insertReport(int reportedId,String reason,int senderId,String message);
 	public List<UserReport> getReport();
 	public void deleteUser(int userId);
+	public Message getReportedMessage(int senderId,int receiverId); 
 }

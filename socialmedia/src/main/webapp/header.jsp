@@ -23,106 +23,108 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> 
 <style>
-@charset "ISO-8859-1";
-* {
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: sans-serif;
+    background-color: #f0f2f5;
 }
-header {
+
+/* Header container */
+.insta header {
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 5%;
-    border-bottom: 1px solid gray;
-    background-color: white;
-    position: sticky;
-    top: 0;
-    z-index: 10;
 }
-header .logo img {
+
+/* Logo styles */
+.logo img {
     height: 80px;
-    object-fit: contain; 
 }
-header .search-box {
-    flex: 1;
-    max-width: 400px;
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-right: 20px;
-}
-header .search-box input[type="search"] {
-    flex: 1;
-    border: none;
-    outline: none;
-    padding: 5px;
-    font-size: 14px;
-}
-header nav ul {
-    display: flex;
-    list-style: none;
-    align-items: center;
-}
-header nav ul li {
-    margin-right: 60px;
-    padding: 5px;
-}
-header nav ul li a {
+
+/* Navigation bar styles */
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     align-items: center;
 }
-header nav ul li a img, header nav ul li a i {
-    width: 22px;
-    height: 22px;
+
+nav ul li {
+    margin: 0 40px;
+}
+
+nav ul li a {
+    color: #333;
+    text-decoration: none;
+    font-size: 18px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+nav ul li a:hover {
+    color: #007bff;
+}
+
+nav ul li a i {
+    font-size: 20px;
+}
+
+/* Profile icon styles */
+.profile-icon {
+    position: relative;
+}
+
+.profile-icon img {
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
     object-fit: cover;
-    color: rgb(39, 29, 29);
 }
+
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+    background-color: #fff;
+    min-width: 150px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 5;
     right: 0;
+    border-radius: 5px;
 }
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-.dropdown-content a:hover {
-    background-color: #f1f1f1;
-}
+
 .profile-icon:hover .dropdown-content {
     display: block;
 }
-img {
-    border-radius: 50%;
+
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
 }
-.name {
-    margin: 10px;
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
 }
-@media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    header .search-box {
-        margin: 10px 0;
-        width: 100%;
-    }
-    header nav ul {
-        flex-direction: column;
-        width: 100%;
-    }
-    header nav ul li {
-        margin: 5px 0;
-    }
+
+.dropdown-content .name {
+    padding: 12px 16px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+}
+
+.nav-icon {
+    margin: 0;
+}
 </style>
 </head>
 <body>
@@ -143,9 +145,9 @@ img {
             }
         }
     </script>
-       <nav>
+        <nav>
         <ul>
-        	<li><a href="search.jsp"><i class="fa-solid fa-magnifying-glass"></i></a></li>
+            <li><a href="search.jsp"><i class="fa-solid fa-magnifying-glass nav-icon"></i></a></li>
             <li><a href="home.jsp"><i class="fa-solid fa-house nav-icon"></i></a></li>
             <li><a href="${pageContext.request.contextPath}/userlist"><i class="fa-solid fa-message nav-icon"></i></a></li>
             <li><a href="post.jsp"><i class="fa-solid fa-square-plus nav-icon"></i></a></li>

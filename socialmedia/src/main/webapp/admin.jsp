@@ -52,7 +52,6 @@ nav ul li a:hover {
     margin-right: 5px;
 }
 
-/* Tables */
 table {
     width: 80%;
     margin: 20px auto;
@@ -102,11 +101,25 @@ input[type="submit"] {
 input[type="submit"]:hover {
     background-color: #e68a00;
 }
-
+ .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #333;
+            color: #f2f2f2;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .back-button:hover {
+            background-color: #ddd;
+            color: black;
+        }
 </style>
 </head>
 <body>
-<h2>Users</h2>
+<a href="adminmain.jsp" class="back-button">Back</a>
     <table>
         <thead>
             <tr>
@@ -128,36 +141,11 @@ input[type="submit"]:hover {
                     <td>
                         <form action="delete" method="post">
                        <input type="hidden" name="userid" value="<%= user.getUserId() %>">
-                       <input type="submit" value="delete">
+                       <input type="submit" value="block">
                    </form>
                     </td>
                 </tr>
            <%} %>
-        </tbody>
-    </table>
-    <h2>Messages</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Sender</th>
-                <th>Receiver</th>
-                <th>Content</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach var="message" items="${messages}">
-                <tr>
-                    <td>${message.id}</td>
-                    <td>${message.sender.name}</td>
-                    <td>${message.receiver.name}</td>
-                    <td>${message.content}</td>
-                    <td>
-                        <a href="<c:url value='/deleteMessage?id='${message.id}"/>">Delete</a>
-                    </td>
-                </tr>
-            </c:forEach>
         </tbody>
     </table>
 </body>

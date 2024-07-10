@@ -216,15 +216,15 @@ public class UserDaoImpl implements UserDAO{
 		}
 
 		@Override
-		public void insertReport(int reportedId,String reason,int senderId) {
-			String query="insert into reports(sender_id,reason,reported_id)values(?,?,?)";
-			Object[] param= {senderId,reason,reportedId};
+		public void insertReport(int reportedId,String reason,int senderId,String message) {
+			String query="insert into reports(sender_id,reason,reported_id,content)values(?,?,?,?)";
+			Object[] param= {senderId,reason,reportedId,message};
 			jdbcTemplate.update(query, param);
 		}
 
 		@Override
 		public List<UserReport> getReport() {
-			String query="select id,sender_id,reported_id,report_date,reason from reports";
+			String query="select id,sender_id,reported_id,report_date,reason,content from reports";
 			return jdbcTemplate.query(query, new ReportMapper());
 		}		
 		
@@ -232,5 +232,12 @@ public class UserDaoImpl implements UserDAO{
 			String query="update user set is_deleted=1 where user_id=?";
 			Object[] param= {userId};
 			jdbcTemplate.update(query, param);
+		}
+
+		@Override
+		public Message getReportedMessage(int senderId,int receiverId) {
+			String query="SELECT id,sender_id,receiver_id,message,timestamp FROM messages WHERE sender_id = ? AND receiver_id = ? ORDER BY id DESC LIMIT 1";
+			Object[] param= {receiverId,senderId};
+			return   jdbcTemplate.queryForObject(query,new MessageMapper(),param);
 		}
 }

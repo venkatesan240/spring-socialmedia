@@ -17,123 +17,118 @@
 }
 
 body {
-    background-color: #fff;
-    font-family: 'Roboto', sans-serif;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fafafa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 main {
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 100px;
-    min-height: 100vh;
-    margin: auto;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+}
+
+.phoneImg {
+    max-width: 500px;
+    margin-right: 40px;
 }
 
 .form-div {
-    display: flex;
-    flex-direction: column;
+    max-width: 400px;
+    width: 100%;
 }
-.phoneImg{
-    height: 500px;
-    margin-right: 50px;
-}
+
 .form-div form {
     display: flex;
     flex-direction: column;
-    text-align: center;
     align-items: center;
-    justify-content: center;
-    padding: 3vh 2vw;
-    border: 1px solid rgba(128, 128, 128, 0.3);
-    margin-top: 50px;
 }
 
-.form-div form .instaLogo {
-    width: 200px;
-    margin: 1px ;
+.instaLogo {
+    max-width: 150px;
+    margin-bottom: 20px;
 }
 
-.form-div form .input {
-    width: 90%;
-    padding: .8rem;
-    border-radius: 8px;
-    border: 1px solid rgba(128, 128, 128, 0.3);
-    margin: 5px;
+.input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#toggle-password {
+    align-self: flex-start;
+    margin-bottom: 10px;
 }
 
 .login-btn {
-    width: 97%;
-    padding: .4rem;
-    font-weight: 700;
-   	 background-color: rgb(235, 15, 15);
-    border: none;
-    border-radius: 8px;
-    margin: 8px 0px;
+    width: 100%;
+    background-color: #0095f6;
     color: white;
-}
-.login-btn:hover{
-	background-color: rgb(18, 17, 17);
-}
-
-#or {
-    margin: 20px 0;
-}
-
-#or:before,
-#or:after {
-    content: '------------------------';
-    color: rgba(128, 128, 128, 0.7);
-    margin: 0 10px;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
 }
 
-.fb-login {
-    font-weight: 700;
-    font-size: 95%;
-    color: rgb(85, 0, 255);
-    margin-bottom: 30px;
-    margin-top: 10px;
+.login-btn:hover {
+    background-color: #0077cc;
 }
 
-.sign-up {
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
     text-align: center;
-    border: 1px solid rgba(128, 128, 128, 0.3);
-    padding: 20px;
-    margin: 10px;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 .get-app {
-    display: flex;
-    flex-direction: column;
     text-align: center;
+    margin-top: 20px;
 }
 
 .store {
     display: flex;
-    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
-#play {
-    width: 190px;
+#play, #microsoft {
+    max-width: 100px;
+    cursor: pointer;
 }
 
-#microsoft {
-    width: 135px;
-    border-radius: 8px;
+#play:hover, #microsoft:hover {
+    opacity: 0.8;
 }
-.input {
-            margin-bottom: 10px;
-        }
-        .error-message {
-            color: red;
-            font-size: 14px;
-            margin-top: 5px;
-        }
+
+
 </style>
 </head>
 <body>
- <main>
-        <img src="img/karsten-winegeart-60GsdOMRFGc-unsplash.jpg" alt="instagram-logo-illustration.png" class="phoneImg">	
+ <main class="main">
+        <img src="img/social-media-5187243_1280.png.jpg" alt="instagram-logo-illustration.png" class="phoneImg">	
         <div class="form-div">
             <form action="signup" method="post" onsubmit="return validatePassword()">
                 <img class="instaLogo" src="img/connect-high-resolution-logo-black.png" alt="logo">
@@ -168,7 +163,6 @@ main {
                 </div>
             </div>
         </div>
-    </main>
      <script>
         function validatePassword() {
             var password = document.getElementById("password").value;
@@ -195,5 +189,6 @@ main {
             confirmPassword.type = type;
         });
     </script>
+   </main>
 </body>
 </html>

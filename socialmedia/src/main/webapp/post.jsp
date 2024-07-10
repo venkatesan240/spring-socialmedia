@@ -44,23 +44,24 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
             max-width: 600px;
             margin: auto;
             margin-bottom: 20px;
+            margin-top:10px;
         }
         .post-form h2 {
             margin-top: 0;
         }
         .post-form input[type="file"] {
             display: block;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         .post-form textarea {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
+            padding: 5px;
+            margin-bottom: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
         }
         .post-form button {
-            padding: 10px 15px;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
             background-color: #0e0f0f;
@@ -417,38 +418,39 @@ button:hover {
             </div>      
     </div>
     <!-- Comment Modal -->
-   <div id="commentModal-<%= post.getId() %>" class="modal">
-                <div class="modal-content">
-                     <span class="close" data-postId="<%= post.getId() %>">&times;</span>
-                    <h5>Comments</h5>
-                    <div id="commentsContainer-<%= post.getId() %>">
-                        <% 
-                        List<Comment> comments = null;
-                            comments = userDao.getCommentsByPostId(post.getId());
-                        if (comments != null) {
-                            for (Comment comment : comments) {
-                        %>
+	<div id="commentModal-<%=post.getId()%>" class="modal">
+		<div class="modal-content">
+			<span class="close" data-postId="<%=post.getId()%>">&times;</span>
+			<h5>Comments</h5>
+			<div id="commentsContainer-<%=post.getId()%>">
+				<%
+				List<Comment> comments = null;
+				comments = userDao.getCommentsByPostId(post.getId());
+				if (comments != null) {
+					for (Comment comment : comments) {
+				%>
 				<a> <strong><%=userDao.getUserById(comment.getUserId()).getFirstName()%></strong>:
 					<%=comment.getComment()%> <span class="comment-timestamp"
-					data-timestamp="<%= comment.getCreatedAt() %>"></span>
+					data-timestamp="<%=comment.getCreatedAt()%>"></span>
 				</a> <br>
 				<%
 				}
 				}
 				%>
-                    </div>
-                    <form action="Comment" method="post">
-                        <textarea id="newComment-<%= post.getId() %>" rows="1" name="comment" placeholder="Add a comment..."></textarea>
-                        <input type="hidden" name="userid" value="<%= userId %>" /> 
-                        <input type="hidden" name="postid" value="<%= post.getId() %>" />
-                        <button type="submit" class="submitComment">Post Comment</button>
-                    </form>
-                </div>
-            </div>
- <%
- }
- %>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+			</div>
+			<form action="Comment" method="post">
+				<textarea id="newComment-<%=post.getId()%>" rows="1"
+					name="comment" placeholder="Add a comment..."></textarea>
+				<input type="hidden" name="userid" value="<%=userId%>" /> <input
+					type="hidden" name="postid" value="<%=post.getId()%>" />
+				<button type="submit" class="submitComment">Post Comment</button>
+			</form>
+		</div>
+	</div>
+	<%
+	}
+	%>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>

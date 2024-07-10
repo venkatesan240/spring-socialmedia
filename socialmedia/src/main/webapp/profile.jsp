@@ -18,72 +18,89 @@
 <html lang="en">
 <style>
 /* Profile Page Styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
-}
+ body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-h1 {
-    text-align: center;
-    color: #333;
-    margin-top: 20px;
-}
+        .profile-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
 
-div {
-    width: 300px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    text-align: center;
-}
+        .profile-image {
+            border-radius: 50%;
+            width: 110px;
+            height: 110px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
 
-img {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 20px;
-}
+        .profile-info p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #333;
+        }
 
-p {
-    margin: 10px 0;
-    color: #666;
-    font-size: 16px;
-}
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
 
-p:first-of-type {
-    font-weight: bold;
-    color: #333;
-}
-a p {
-    margin-top: 20px;
-    color: #ea0f0f;
-    font-size: 16px;
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
+        .btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
 
-a p:hover {
-    color: #0056b3;
-}
+        .edit-profile {
+            background-color: #28a745;
+        }
+
+        .edit-profile:hover {
+            background-color: #218838;
+        }
+
+        .logout {
+            background-color: #dc3545;
+        }
+
+        .logout:hover {
+            background-color: #c82333;
+        }
 </style>
 <head>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
 </head>
 <body>
-<h1>User Profile</h1>
-     <div>
-      <img src="data:image/jpeg;base64,<%= base64Image %>" alt="Profile">
-        <p>Username: <%= user.getFirstName() %></p>
-        <p>Email: <%= user.getEmail() %></p>
-       <a href="update.jsp"><p>Edit profile</p></a>
-       <a href="logout"><p>Logout</p></a>
-       <button>Send Request</button>
-     </div>
+      <div class="profile-container">
+      <h1>User Profile</h1>
+        <img src="data:image/jpeg;base64,<%= base64Image %>" alt="Profile" class="profile-image">
+        <div class="profile-info">
+            <p>Username: <%= user.getFirstName() %></p>
+            <p>Email: <%= user.getEmail() %></p>
+        </div>
+        <a href="update.jsp" class="btn edit-profile">Edit profile</a>
+        <a href="logout" class="btn logout">Logout</a>
+    </div>
 </body>
 </html>
