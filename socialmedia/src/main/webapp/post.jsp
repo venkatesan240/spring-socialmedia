@@ -1,3 +1,4 @@
+<%@page import="ch.qos.logback.core.recovery.ResilientSyslogOutputStream"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
     <%@ page import="java.util.Base64" %>
@@ -18,8 +19,11 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
         e.printStackTrace();
     }
 %>
-<% 
-        int userId = (int) session.getAttribute("userid");
+<%
+if(session == null || session.getAttribute("userid") == null){
+	response.sendRedirect("signin.jsp");
+}
+   int userId = (int) session.getAttribute("userid");
         %>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,6 +33,9 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
     <title>Instagram-like Post</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@latest"></script>
     <style>
     body {
             font-family: Arial, sans-serif;
@@ -171,37 +178,49 @@ UserDAO  userDao = (UserDAO) context1.getBean("userDao");
             color: #007bff;
             cursor: pointer;
         }
-        .post-right {
+         .post-right {
             position: relative;
             display: inline-block;
         }
-        .post-right i {
+
+        .fa-ellipsis {
             cursor: pointer;
             font-size: 20px;
             color: #333;
         }
+
         .delete-option {
             position: absolute;
-            top: 20px;
             right: 0;
             background-color: #fff;
-            border: 1px solid #ddd;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 10px;
-            border-radius: 4px;
+            display: none; /* Hidden by default */
             z-index: 1000;
         }
-        .delete-option button {
-            background-color: #e74c3c;
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 14px;
+
+        .delete-option form {
+            margin: 5px 0;
         }
+
+        .delete-option button {
+            background-color: #f5f5f5;
+            border: none;
+            color: #333;
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 5px 0;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+        }
+
         .delete-option button:hover {
-            background-color: #c0392b;
+            background-color: #e0e0e0;
         }
        /* Modal container */
 .modal {
@@ -342,6 +361,25 @@ button:hover {
     visibility: visible;
     opacity: 1;
 }
+.alert {
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
     </style>
 </head>
 <body>
@@ -352,7 +390,7 @@ button:hover {
             <input type="hidden" name="username" value="<%= session.getAttribute("name") %>">
             <input type="hidden" name="userid" value="<%= session.getAttribute("userid") %>">
             <input type="file" name="post-image" id="post-image" accept="image/*" required>
-            <textarea name="post-content" id="post-content" rows="4" placeholder="Description"></textarea>
+            <textarea name="post-content" id="post-content" rows="4" placeholder="Description(Optional)"></textarea>
             <button type="submit">Post</button>
         </form>
     </div>
@@ -375,21 +413,51 @@ button:hover {
 					data-timestamp="<%= post.getTimestamp() %>"></span>
                         </div>
                     </div>
-                    <div class="post-right">
-                        <i class="fa-solid fa-ellipsis" onclick="toggleDeleteOption(this)"></i>
-                        <div class="delete-option" style="display: none;">
-                            <form action="deletePost" method="post">
-                                <input type="hidden" name="id" value="<%= post.getId() %>">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="post-content">
-                    <img src="data:image/jpg;base64,<%= Base64.getEncoder().encodeToString(post.getImage()) %>" alt="Post Content">
-                    <p><%= post.getDescription() %></p>
-                </div>
-                <div class="post-footer">
+				<div class="post-right">
+					<i class="fa-solid fa-ellipsis" onclick="toggleDeleteOption(this)"></i>
+					<div class="delete-option" style="display: none;">
+				<% if((int)session.getAttribute("userid") == post.getUserId()){ %>
+						<form action="deletePost" method="post">
+							<input type="hidden" name="id" value="<%=post.getId()%>">
+							<button type="submit">Delete</button>
+						</form>
+				<%} %>
+				<% if((int)session.getAttribute("userid") != post.getUserId()){ %>
+						<form action="reportPost" method="post"
+							onsubmit="event.preventDefault(); reportPostWithReason(this);">
+							<input type="hidden" name="id" value="<%=post.getId()%>">
+							<input type="hidden" name="reason" value="">
+							<button type="submit">Report</button>
+						</form>
+						<%} %>
+					</div>
+				</div>
+			</div>
+			<div class="post-content">
+				<%
+				String contentType = post.getContentType();
+				System.out.println(contentType);
+				if (contentType != null) {
+					if (contentType.startsWith("image")) {
+				%>
+				<img
+					src="data:<%=contentType%>;base64,<%=Base64.getEncoder().encodeToString(post.getImage())%>"
+					alt="Post Content">
+				<%
+				} else if (contentType.startsWith("video")) {
+				%>
+				<video width="640" height="480" controls>
+					<source
+						src="data:<%=contentType%>;base64,<%=Base64.getEncoder().encodeToString(post.getImage())%>"
+						type="<%=contentType%>">
+				</video>
+				<%
+				}
+				}
+				%>
+				<p><%=post.getDescription()%></p>
+			</div>
+			<div class="post-footer">
 				<div class="like-share-comment">
 					<i id="like-button-<%=post.getId()%>"
 						class="fa-regular fa-heart like-button"
@@ -453,7 +521,41 @@ button:hover {
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function reportPostWithReason(form) {
+            var reason = prompt("Please enter the reason for reporting this post:");
+            if (reason != null && reason.trim() !== "") {
+                form.reason.value = reason; 
+                form.submit(); 
+            } else {
+                alert("Report cancelled. Reason for reporting is required.");
+            }
+        }
+    </script>
     <script>
+    <%
+    String reportStatus = (String) request.getAttribute("reportStatus");
+    if(reportStatus != null && !reportStatus.isEmpty()){
+    	if (reportStatus.equals("Reported successfully")) {
+	 %>
+    Swal.fire({
+        title: '<%= reportStatus %>',
+        type: 'success',
+        confirmButtonColor: '#3c445c',
+        confirmButtonText: 'Ok'
+    })
+   <% }
+    else if(reportStatus.equals("Report failure")){
+   %>
+   Swal.fire({
+       title: '<%= reportStatus %>',
+       type: 'failure',
+       confirmButtonColor: '#3c445c',
+      confirmButtonText: 'Ok'
+   })
+   <%}
+        request.removeAttribute("reportStatus");
+   }%>
     function toggleDeleteOption(element) {
 	    const deleteOption = element.nextElementSibling;
 	    if (deleteOption.style.display === 'none' || deleteOption.style.display === '') {

@@ -3,13 +3,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.chainsys.socialmedia.dao.UserDAO" %>
 <%@ page import="com.chainsys.socialmedia.model.User" %>
+<%@ page import="com.chainsys.socialmedia.model.Post" %>
 <%@ page import="java.util.List" %>
 <%
 ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 UserDAO userDao = (UserDAO) context.getBean("userDao");
 	List<User> users=userDao.getUsers();
+	List<Post> posts=userDao.getAllPosts();
 %>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <title>Admin Page</title>
 <style>
@@ -147,6 +150,38 @@ input[type="submit"]:hover {
                 </tr>
            <%} %>
         </tbody>
+    </table>
+    <table>
+  	<thead>
+  	<tr>
+ 	<th>Post Id</th>
+ 	<th>user Id</th>
+ 	<th>description</th>
+ 	<th>post</th>
+ 	<th>User Name</th>
+ 	<th>content</th>
+ 	<th>Action</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	 <%
+        if(posts != null)
+            for (Post post : posts) {
+        %>
+  	<tr>
+  	<td><%= post.getId() %></td>
+  	<td><%= post.getUserId() %></td>
+  	<td><%= post.getDescription() %></td>
+  	<td><%= post.getImage() %></td>
+  	<td><%= post.getUserName() %></td>
+  	<td><%= post.getContentType() %></td>
+  	<td> <form action="deletepost" method="post">
+                       <input type="hidden" name="postid" value="<%= post.getId() %>">
+                       <input type="submit" value="delete">
+                   </form></td>
+  	</tr>
+  	<%} %>
+  	</tbody>
     </table>
 </body>
 </html>

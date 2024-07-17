@@ -8,6 +8,7 @@ public class Post {
 	private int userId;
     private String userName;
     private String description;
+    private String contentType;
     private byte[] image;
     private String timeStamp;
     private int likeCount; 
@@ -64,6 +65,13 @@ public class Post {
 	}
 	public void setTimestamp(String timestamp) {
 		this.timeStamp = timestamp;
+	}
+	
+	public String getContentType() {
+		return contentType;
+	}
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
 	@Override
 	public String toString() {

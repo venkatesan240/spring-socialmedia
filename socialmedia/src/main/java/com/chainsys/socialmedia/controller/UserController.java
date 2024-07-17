@@ -56,7 +56,7 @@ public class UserController {
             isValid = false;
             errorMessage.append("Last name should contain only letters.<br>");
         }
-        if (!email.matches("[a-zA-Z0-9@.]{10,}")) {
+        if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
             isValid = false;
             errorMessage.append("Email should be at least 10 characters long and contain only letters, numbers, and '@'.<br>");
         }
@@ -149,6 +149,8 @@ public class UserController {
             is.close();
         }
         Post post = new Post();
+        System.out.println(part.getContentType());
+        post.setContentType(part.getContentType());
         post.setDescription(content);
         post.setImage(data);
         post.setUserId(userId);
@@ -228,8 +230,13 @@ public class UserController {
     	Message msg=new Message();
 		msg.setSenderId(senderId);
 		msg.setReceiverId(receiverId);
-		msg.setMessage(message);
-		userDao.insertMessage(msg);
+		if(message.matches("[a-zA-Z]")) {
+			msg.setMessage(message);
+			userDao.insertMessage(msg);			
+		}
+		else {
+			model.addAttribute("msg","only alphabets");
+		}
 		model.addAttribute("receiverId", receiverId); 
 		return "viewmessage.jsp?";
     }
@@ -275,4 +282,33 @@ public class UserController {
     	model.addAttribute("isblocked","true");
 		return "admin.jsp"; 
 	} 
+    
+    @PostMapping("/reportPost")
+    public String reportPost(@RequestParam("id") int postId,@RequestParam("reason") String reason, Model model) {
+            Post post = userDao.getPost(postId);
+            int userId=post.getUserId();
+            byte[] image = post.getImage();
+           if(userId != 0 ) {
+        	   userDao.reportPost(postId, userId, image,post.getContentType(),reason);
+               model.addAttribute("reportStatus","Reported successfully");
+   				return "post.jsp";
+           }else {
+        	   model.addAttribute("reportStatus","Report failure");
+        	   return "post.jsp";
+           }
+            
+    }
+    
+    @PostMapping("/Search")
+    public String toSearch(@RequestParam("name") String name,Model model) {
+    	List<User>  users = userDao.toSearch(name);
+    	model.addAttribute("users", users);
+		return "chat.jsp";   	
+    }
+    
+    @PostMapping("/deletepost")
+    public String deletePost(@RequestParam("postid") int postId) {
+    	userDao.deletePost(postId);
+		return "admin.jsp";    	
+    }
 }

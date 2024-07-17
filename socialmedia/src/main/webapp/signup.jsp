@@ -20,43 +20,32 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #fafafa;
+    background-color: #fafafa; /* Adjust background color as needed */
+}
+
+.main {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
-main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
-}
-
 .phoneImg {
-    max-width: 500px;
+    max-width: 600px;
     margin-right: 40px;
 }
 
 .form-div {
-    max-width: 400px;
-    width: 100%;
-}
-
-.form-div form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background-color: white;
+    padding: 0px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
 }
 
 .instaLogo {
-    max-width: 150px;
-    margin-bottom: 20px;
+    width: 150px;
+    padding-left:100px;
 }
 
 .input {
@@ -68,59 +57,75 @@ main {
     box-sizing: border-box;
 }
 
-#toggle-password {
-    align-self: flex-start;
-    margin-bottom: 10px;
-}
-
 .login-btn {
     width: 100%;
-    background-color: #0095f6;
+    background-color: #0095f6; /* Adjust button color as needed */
     color: white;
     border: none;
     padding: 10px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    margin-bottom: 20px;
 }
 
 .login-btn:hover {
-    background-color: #0077cc;
+    background-color: #0077cc; /* Darker color on hover */
 }
 
-.error-message {
-    color: red;
-    font-size: 14px;
-    margin-bottom: 10px;
-    text-align: center;
+.forgetpassword {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
 }
 
-.error {
-    color: red;
+.forgetpassword a {
+    text-decoration: none;
+    color: #262626; /* Link color */
     font-size: 14px;
-    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.forgetpassword a:hover {
+    text-decoration: underline;
+}
+
+.sign-up {
     text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.sign-link {
+    color: #0095f6; /* Link color */
+    text-decoration: none;
+}
+
+.sign-link:hover {
+    text-decoration: underline;
 }
 
 .get-app {
+    margin-top: 10px;
     text-align: center;
-    margin-top: 20px;
+    margin-bottom:20px;
 }
 
 .store {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
 }
 
 #play, #microsoft {
-    max-width: 100px;
-    cursor: pointer;
+    width: 120px;
+    margin: 0 10px;
 }
-
-#play:hover, #microsoft:hover {
-    opacity: 0.8;
+/* CSS for the error message */
+.error-message {
+    color: red; /* Text color */
+    font-size: 14px; /* Font size */
 }
 
 
@@ -134,18 +139,17 @@ main {
                 <img class="instaLogo" src="img/connect-high-resolution-logo-black.png" alt="logo">
                 <input type="text" class="input" name="first-name" placeholder="first name" pattern="[a-zA-Z]{5,}"title="First name should contain only letters" required>
                 <input type="text" class="input" name="last-name" placeholder="last name" pattern="[a-zA-Z]{1,}" title="Last name should contain only letters"  required>
-                <input type="text" class="input" name="email" placeholder="email" required>
+                <input type="text" class="input" name="email" placeholder="email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="enter correct email(eg:john@gmail.com)" required>
                  <input type="password" class="input" id="password" name="password" pattern="[a-zA-Z0-9@#]{4,}" title="Password must be at least 4 characters long" required placeholder="Password">
         <input type="password" class="input" id="confirm-password" name="confirm-password" pattern="[a-zA-Z0-9@#]{4,}" title="Password must be at least 4 characters long" required placeholder="Confirm Password">
-        <input type="checkbox" id="toggle-password"> Show Password
         <div id="password-error" class="error-message"></div>
+        <input type="checkbox" id="toggle-password"> Show Password      
                 <button class="login-btn">Register</button>
 <% if (request.getAttribute("error") != null) { %>
         <div class="error">
             <%= request.getAttribute("error") %>
         </div>
     <% } %>
-
     <script type="text/javascript">
         window.onload = function() {
             var alertMessage = "<%= request.getAttribute("error") != null ? request.getAttribute("error") : "" %>";
@@ -155,6 +159,9 @@ main {
         }
     </script>
             </form>
+            <div class="sign-in">
+                    <p>Already a user? <a href="signup.jsp" class="sign-link">Sign in</a></p>
+                </div>
             <div class="get-app">
                 <p>Get the app</p>
                 <div class="store">
@@ -163,6 +170,7 @@ main {
                 </div>
             </div>
         </div>
+  </main>
      <script>
         function validatePassword() {
             var password = document.getElementById("password").value;
@@ -189,6 +197,5 @@ main {
             confirmPassword.type = type;
         });
     </script>
-   </main>
 </body>
 </html>

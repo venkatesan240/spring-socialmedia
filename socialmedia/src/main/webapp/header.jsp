@@ -125,6 +125,52 @@ nav ul li a i {
 .nav-icon {
     margin: 0;
 }
+nav {
+    position: relative;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    display: inline-block;
+    position: relative;
+}
+
+.nav-icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    min-width: 160px;
+}
+
+.dropdown li {
+    display: block;
+}
+
+.dropdown li a {
+    display: block;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: black;
+}
+
+.dropdown li a:hover {
+    background-color: #ddd;
+}
+
 </style>
 </head>
 <body>
@@ -147,7 +193,12 @@ nav ul li a i {
     </script>
         <nav>
         <ul>
-            <li><a href="search.jsp"><i class="fa-solid fa-magnifying-glass nav-icon"></i></a></li>
+          <!--  <a href="" id="search-icon"><i class="fa-solid fa-magnifying-glass nav-icon"></i></a> -->
+                <ul class="dropdown" id="dropdown-menu">
+                    <li><a href="#">User 1</a></li>
+                    <li><a href="#">User 2</a></li>
+                    <li><a href="#">User 3</a></li>
+                </ul>
             <li><a href="home.jsp"><i class="fa-solid fa-house nav-icon"></i></a></li>
             <li><a href="${pageContext.request.contextPath}/userlist"><i class="fa-solid fa-message nav-icon"></i></a></li>
             <li><a href="post.jsp"><i class="fa-solid fa-square-plus nav-icon"></i></a></li>
@@ -168,6 +219,55 @@ nav ul li a i {
     </nav>
     </header>
 </div>
+<script >
+document.getElementById('search-icon').addEventListener('click', function(event) {
+    event.preventDefault();
+    var searchContainer = document.getElementById('search-container');
+    if (searchContainer.style.display === 'block') {
+        searchContainer.style.display = 'none';
+    } else {
+        searchContainer.style.display = 'block';
+    }
+});
+
+document.getElementById('search-input').addEventListener('input', function() {
+    var searchQuery = this.value;
+    if (searchQuery.length > 0) {
+        fetch('/api/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                name: searchQuery
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            var dropdownMenu = document.getElementById('dropdown-menu');
+            dropdownMenu.innerHTML = '';
+            data.forEach(user => {
+                var listItem = document.createElement('li');
+                var link = document.createElement('a');
+                link.href = '#';
+                link.textContent = user.name; 
+                listItem.appendChild(link);
+                dropdownMenu.appendChild(listItem);
+            });
+        });
+    } else {
+        document.getElementById('dropdown-menu').innerHTML = '';
+    }
+});
+
+document.addEventListener('click', function(event) {
+    var isClickInside = document.getElementById('search-icon').contains(event.target) || document.getElementById('search-container').contains(event.target);
+    if (!isClickInside) {
+        document.getElementById('search-container').style.display = 'none';
+    }
+});
+
+</script>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

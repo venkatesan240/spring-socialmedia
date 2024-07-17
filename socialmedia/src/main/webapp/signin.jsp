@@ -45,14 +45,15 @@ body {
 }
 
 .instaLogo {
-    width: 200px;
-    margin-bottom: 20px;
+    width: 150px;
+
+    padding-left:100px;
 }
 
 .input {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
@@ -126,19 +127,11 @@ body {
     </style>
 </head>
 <body>
-    <% 
-    if(session == null){
-        response.sendRedirect("signin.jsp");
-    }
-    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-    response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
-    response.setHeader("Expires", "0"); // Proxies.
-    %>
     <main class="main">
         <img src="img/social-media-5187243_1280.png.jpg" alt="" class="phoneImg">
         <div class="form-div">
             <form id="login-form" action="signin" method="post">
-                <img class="instaLogo" src="img/connect-high-resolution-logo-black.png" alt="logo">
+                <img class="instaLogo" src="img/connect-high-resolution-logo-black-removebg-preview.png" alt="logo">
                 <input type="text" class="input" name="email" placeholder="phone number, username, or email" required>
                 <input type="password" class="input" name="password" required placeholder="Password">
                 <button type="submit" class="login-btn">Log In</button>
@@ -184,5 +177,5 @@ body {
             </form>
         </div>
     </main>
-</body>
+</body>	
 </html>

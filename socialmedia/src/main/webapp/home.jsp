@@ -308,6 +308,16 @@ button:hover {
 </style>
 </head>
 <body>
+  <% 
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+    response.setHeader("Expires", "0"); // Proxies.
+    
+    if(session == null || session.getAttribute("userid") == null){
+    	response.sendRedirect("signin.jsp");
+    }
+    
+    %>
 <%@include file="header.jsp" %>
 <div id="posts-container">
         <% for (Post post : posts) { 						
@@ -331,15 +341,43 @@ button:hover {
                     <div class="post-right">
                         <i class="fa-solid fa-ellipsis" onclick="toggleDeleteOption(this)"></i>
                         <div class="delete-option" style="display: none;">
-                            <form action="deletePost" method="post">
-                                <input type="hidden" name="id" value="<%= post.getId() %>">
-                                <button type="submit">Delete</button>
-                            </form>
+                            <% if((int)session.getAttribute("userid") == post.getUserId()){ %>
+						<form action="deletePost" method="post">
+							<input type="hidden" name="id" value="<%=post.getId()%>">
+							<button type="submit">Delete</button>
+						</form>
+				<%} %>
+				<% if((int)session.getAttribute("userid") != post.getUserId()){ %>
+						<form action="reportPost" method="post">
+							<input type="hidden" name="id" value="<%=post.getId()%>">
+							<button type="submit">Report</button>
+						</form>
+				<%} %>
                         </div>
                     </div>
                 </div>
                 <div class="post-content">
-                    <img src="data:image/jpg;base64,<%= Base64.getEncoder().encodeToString(post.getImage()) %>" alt="Post Content">
+                   <%
+				String contentType = post.getContentType();
+				System.out.println(contentType);
+				if (contentType != null) {
+					if (contentType.startsWith("image")) {
+				%>
+				<img
+					src="data:<%=contentType%>;base64,<%=Base64.getEncoder().encodeToString(post.getImage())%>"
+					alt="Post Content">
+				<%
+				} else if (contentType.startsWith("video")) {
+				%>
+				<video width="640" height="480" controls>
+					<source
+						src="data:<%=contentType%>;base64,<%=Base64.getEncoder().encodeToString(post.getImage())%>"
+						type="<%=contentType%>">
+				</video>
+				<%
+				}
+				}
+				%>
                     <p><%= post.getDescription() %></p>
                 </div>
                 <div class="post-footer">

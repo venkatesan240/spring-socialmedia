@@ -3,13 +3,17 @@
 <%@ page import="com.chainsys.socialmedia.dao.UserDAO" %>
 <%@ page import="com.chainsys.socialmedia.model.UserReport" %>
 <%@ page import="com.chainsys.socialmedia.model.Message" %>
+<%@page import="com.chainsys.socialmedia.model.ReportPost" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Base64" %>
 <%
 ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 UserDAO userDao = (UserDAO) context.getBean("userDao");
 List<UserReport> userReport= userDao.getReport();
+List<ReportPost> reportPost=userDao.getPostReport();
 %>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <title>view report details</title>
 <style>
@@ -77,6 +81,19 @@ input[type="submit"]:hover {
             background-color: #ddd;
             color: black;
         }
+        .product-image {
+        width: 100px; /* Adjust width as needed */
+        height: auto; /* Maintain aspect ratio */
+        border: 1px solid #ccc; /* Optional border */
+        padding: 5px; /* Optional padding */
+        box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Optional shadow */
+        border-radius: 5px; /* Optional rounded corners */
+    }
+
+    td {
+        text-align: center; /* Center the image in the cell */
+        vertical-align: middle; /* Vertically align the image in the middle of the cell */
+    }
 </style>
 </head>
 <body>
@@ -106,6 +123,54 @@ input[type="submit"]:hover {
         	<td><%= user.getContent() %></td>
         </tr>  
         <%} %>      
+        </tbody>
+     </table>
+     <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>postId</th>
+                <th>userId</th>
+                <th>report date</th>
+                <th>Reason</th>
+                 <th>post</th>
+            </tr>
+        </thead>
+        <tbody>
+        <%
+if (reportPost != null) {
+    for (ReportPost user : reportPost) {
+        String contentType = user.getContent();
+%>
+        <tr>
+            <td><%= user.getId() %></td>
+            <td><%= user.getPostId() %></td>
+            <td><%= user.getUserId() %></td>
+            <td><%= user.getReportDate() %></td>
+            <td><%= user.getReason() %></td>
+            <%
+            if (contentType != null) {
+                if (contentType.startsWith("image")) {
+            %>
+            <td><img class="product-image" src="data:<%= contentType %>;base64,<%= Base64.getEncoder().encodeToString(user.getImage()) %>" alt=""></td>
+            <%
+                } else if (contentType.startsWith("video")) {
+                	System.out.println(contentType);
+            %>
+            <td>
+                <video width="500" height="300" controls>
+                    <source src="data:<%= contentType %>;base64,<%= Base64.getEncoder().encodeToString(user.getImage()) %>" type="<%= contentType %>">
+                </video>
+            </td>
+            <%
+                }
+            }
+            %>
+        </tr>
+<%
+    }
+}
+%>
         </tbody>
      </table>
 </body>

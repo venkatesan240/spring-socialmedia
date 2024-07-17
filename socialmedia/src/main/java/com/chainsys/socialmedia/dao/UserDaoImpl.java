@@ -12,9 +12,12 @@ import com.chainsys.socialmedia.mapping.UserMapper;
 import com.chainsys.socialmedia.mapping.PostMapper;
 import com.chainsys.socialmedia.mapping.MessageMapper;
 import com.chainsys.socialmedia.mapping.ReportMapper;
+import com.chainsys.socialmedia.mapping.PostReportMapper;
+
 import com.chainsys.socialmedia.model.Comment;
 import com.chainsys.socialmedia.model.Message;
 import com.chainsys.socialmedia.model.Post;
+import com.chainsys.socialmedia.model.ReportPost;
 import com.chainsys.socialmedia.model.User;
 import com.chainsys.socialmedia.model.UserReport;
 
@@ -89,14 +92,14 @@ public class UserDaoImpl implements UserDAO{
 
 		@Override
 		public void savePost(Post post) {
-			String query = "INSERT INTO posts (user_id,description, image,user_name) values (?,?,?,?)";
-			Object[] params= {post.getUserId(),post.getDescription(),post.getImage(),post.getUserName()};
+			String query = "INSERT INTO posts (user_id,description, image,user_name,content) values (?,?,?,?,?)";
+			Object[] params= {post.getUserId(),post.getDescription(),post.getImage(),post.getUserName(),post.getContentType()};
 			jdbcTemplate.update(query, params);
 		}
 
 		@Override
 		public List<Post> getAllPosts() {
-			String query = "SELECT id,user_id,user_name,description,image,timestamp FROM posts";
+			String query = "SELECT id,user_id,user_name,description,image,timestamp,content FROM posts";
 			return jdbcTemplate.query(query,new PostMapper());			
 		}
 
@@ -239,5 +242,32 @@ public class UserDaoImpl implements UserDAO{
 			String query="SELECT id,sender_id,receiver_id,message,timestamp FROM messages WHERE sender_id = ? AND receiver_id = ? ORDER BY id DESC LIMIT 1";
 			Object[] param= {receiverId,senderId};
 			return   jdbcTemplate.queryForObject(query,new MessageMapper(),param);
+		}
+
+		@Override
+		public void reportPost(int postId,int userId,byte[] image,String content,String reason) {
+			String query="insert into reportpost(post_id,user_id,post,content_type,reason)values(?,?,?,?,?)";
+			Object[] param= {postId,userId,image,content,reason};
+			jdbcTemplate.update(query,param);
+		}
+
+		@Override
+		public Post getPost(int postId) {
+			String query="select * from posts where id=?";
+			Object[] param= {postId};
+			return jdbcTemplate.queryForObject(query, param, new PostMapper());
+		}
+
+		@Override
+		public List<ReportPost> getPostReport() {
+			String query="select id,post_id,user_id,report_date,post,content_type,reason from reportpost";
+			return jdbcTemplate.query(query, new PostReportMapper());
+		}
+
+		@Override
+		public List<User> toSearch(String name) {
+			String query="select user_id,first_name,last_name,email,password,profile from user where first_name like ? and is_active=0";
+			Object[] param= {name};
+			return jdbcTemplate.query(query, param, new UserMapper());
 		}
 }

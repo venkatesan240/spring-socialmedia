@@ -85,14 +85,23 @@ body {
     <div class="friend-list" id="friend-list">
         <h2>Chat with Friends</h2>
         <div class="modal-body">
+        <div class="search-box">
+				<form action="Search" method="post">
+					<input type="text" name="name" placeholder="Search..."> 
+					<input type="submit" value="Search">
+				</form>
+			</div>
             <%
             List<User> users = (List<User>) request.getAttribute("users");
+            if(session == null || session.getAttribute("userid") == null){
+            	response.sendRedirect("signin.jsp");
+            }
             int currentUserId = (Integer) session.getAttribute("userid");
                 if (users != null) {
                     for (User user1 : users) {
                         if (user1.getUserId()!=currentUserId) {
             %>
-            <div class="card" onclick="javascript:window.location='${pageContext.request.contextPath}/viewmessage?receiverId=<%= user1.getUserId() %>';">
+			<div class="card" onclick="javascript:window.location='${pageContext.request.contextPath}/viewmessage?receiverId=<%= user1.getUserId() %>';">
                 <div class="card-body">
 					<div class="profile">
 						 <span><%=user1.getFirstName() %><%=user1.getLastName() %></span>

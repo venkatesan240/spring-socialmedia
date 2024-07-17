@@ -1,10 +1,10 @@
 package com.chainsys.socialmedia.dao;
 import java.util.List;
 import org.springframework.stereotype.Repository;
-
 import com.chainsys.socialmedia.model.Comment;
 import com.chainsys.socialmedia.model.Message;
 import com.chainsys.socialmedia.model.Post;
+import com.chainsys.socialmedia.model.ReportPost;
 import com.chainsys.socialmedia.model.User;
 import com.chainsys.socialmedia.model.UserReport;
 
@@ -38,4 +38,8 @@ public interface UserDAO {
 	public List<UserReport> getReport();
 	public void deleteUser(int userId);
 	public Message getReportedMessage(int senderId,int receiverId); 
+	public void reportPost(int postId,int userId,byte[] image,String contnt,String reason);
+	public Post getPost(int postId);
+	public List<ReportPost> getPostReport();
+	public List<User> toSearch(String name);
 }

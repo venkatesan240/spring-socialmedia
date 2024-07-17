@@ -169,7 +169,7 @@ List<Message> messages = new ArrayList<>();
 				<i class="fa fa-ellipsis-v" style="padding-right: 20px;"
 					onclick="toggleMenu(this)"></i>
 				<div class="dropdown-menu">
-					<a href="#" onclick="showPopup(<%= user1.getUserId() %>)">Report</a>
+					<a href="#" onclick="showPopup(<%= user1.getUserId() %>)">Report</a>	
 				</div>
 			</div>
 			<div id="reportPopup" class="popup">
@@ -206,24 +206,17 @@ List<Message> messages = new ArrayList<>();
 				<p style="text-align: right;"><%= message.getTimestamp() %></p>
 			</div>
 		</div>
-		<%
-    String status = (String) request.getAttribute("status");
-    if ("success".equals(status)) {
-%>
-		<div class="alert alert-success">Message deleted successfully.</div>
-		<%
-    } else if ("error".equals(status)) {
-%>
-		<div class="alert alert-danger">Error deleting message.</div>
-		<%
-    } else if ("missing_parameters".equals(status)) {
-%>
-		<div class="alert alert-warning">Missing parameters for
-			deletion.</div>
-		<%
-    }
-%>
-
+ <% 
+                String errorMessage = (String) request.getAttribute("msg");
+                if (errorMessage != null) {
+                %>
+                <script type="text/javascript">
+                    alert("<%= errorMessage %>");
+                </script>
+                <%
+                request.removeAttribute("msg");
+                }
+                %>
 		<%
                 } else {
     %>
@@ -253,7 +246,7 @@ List<Message> messages = new ArrayList<>();
 					value="<%= session.getAttribute("userid") %>" /> <input
 					type="hidden" name="receiverId" value="<%= receiverId %>" /> <input
 					type="text" name="message" class="write_msg"
-					placeholder="Type a message" required pattern="^[a-zA-Z0-9\s]+$"
+					placeholder="Type a message" required pattern="^[a-zA-Z\s]+$"
 					title="Message should only contain letters, numbers, and spaces." />
 				<button class="msg_send_btn ml-2" type="submit">
 					<i class="fa-solid fa-paper-plane"></i>
