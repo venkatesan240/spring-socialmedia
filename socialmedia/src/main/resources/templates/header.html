@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" src="header.css">
+ <!-- <script type="text/javascript">
+        // Check if the user is null and redirect if necessary
+        function checkSessionUser(user) {
+            if (user === null) {
+                window.location.href = '/';
+            }
+        }
+    </script> -->
+
+</head>
+<body onload="checkSessionUser(/*[[${session.user}]]*/ null)">
+<div th:fragment="header">
+<div class="insta">
+    <header>
+        <div class="logo">
+            <img th:src="@{/img/connect-high-resolution-logo-black.png}" alt="insta">
+        </div>
+        <div th:if="${session.alert != null}">
+            <script type="text/javascript">
+                /*<![CDATA[*/
+                window.onload = function() {
+                    var alertMessage = /*[[${session.alert}]]*/ 'default alert message';
+                    if (alertMessage.trim() !== "") {
+                        alert(alertMessage);
+                    }
+                }
+                /*]]>*/
+            </script>
+        </div>
+        <nav>
+            <ul>
+                <!-- <a href="" id="search-icon"><i class="fa-solid fa-magnifying-glass nav-icon"></i></a>
+                <ul class="dropdown" id="dropdown-menu">
+                    <li><a href="#">User 1</a></li>
+                    <li><a href="#">User 2</a></li>
+                    <li><a href="#">User 3</a></li>
+                </ul> -->
+                <li><a th:href="@{/home}"><i class="fa-solid fa-house nav-icon"></i></a></li>
+                <li><a th:href="@{/userlist}"><i class="fa-solid fa-message nav-icon"></i></a></li>
+                <li><a th:href="@{/post}"><i class="fa-solid fa-square-plus nav-icon"></i></a></li>
+                <li><a href="#"><i class="fa-solid fa-heart nav-icon"></i></a></li>
+					<li class="nav-item profile-icon">
+					<a th:href="@{/profile}">
+						<img	th:src="${session.user != null && session.user.profile != null ? 'data:image/jpeg;base64,' + session.user.profile : ''}"	alt="Profile">
+					</a>
+						<div class="dropdown-content">
+							<div class="name">
+								<a
+									th:text="${session.user != null ? session.user.firstName + ' ' + session.user.lastName : ''}"></a>
+							</div>
+							<a th:href="@{/logout}">Logout</a> <a th:href="@{/profile}">Profile</a>
+						</div></li>
+				</ul>
+        </nav>
+    </header>
+</div>
+</div>
+<script>
+document.getElementById('search-icon').addEventListener('click', function(event) {
+    event.preventDefault();
+    var searchContainer = document.getElementById('search-container');
+    if (searchContainer.style.display === 'block') {
+        searchContainer.style.display = 'none';
+    } else {
+        searchContainer.style.display = 'block';
+    }
+});
+
+document.getElementById('search-input').addEventListener('input', function() {
+    var searchQuery = this.value;
+    if (searchQuery.length > 0) {
+        fetch('/api/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                name: searchQuery
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            var dropdownMenu = document.getElementById('dropdown-menu');
+            dropdownMenu.innerHTML = '';
+            data.forEach(user => {
+                var listItem = document.createElement('li');
+                var link = document.createElement('a');
+                link.href = '#';
+                link.textContent = user.name; 
+                listItem.appendChild(link);
+                dropdownMenu.appendChild(listItem);
+            });
+        });
+    } else {
+        document.getElementById('dropdown-menu').innerHTML = '';
+    }
+});
+
+document.addEventListener('click', function(event) {
+    var isClickInside = document.getElementById('search-icon').contains(event.target) || document.getElementById('search-container').contains(event.target);
+    if (!isClickInside) {
+        document.getElementById('search-container').style.display = 'none';
+    }
+});
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -5,6 +5,7 @@ public class Comment {
 	private int commentId;
 	private int postId;
 	private int userId;
+	private String userName;
 	private String commentContent;
 	private String createdAt;
 	
@@ -21,6 +22,17 @@ public class Comment {
 		this.userId = userid;
 		this.commentContent = comment;
 		this.createdAt = createdat;
+	}
+
+	
+	
+	public String getUserName() {
+		return userName;
+	}
+
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 
@@ -49,7 +61,7 @@ public class Comment {
 	}
 
 
-	public void setUserid(int userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 

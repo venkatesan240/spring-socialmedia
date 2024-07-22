@@ -315,8 +315,7 @@ button:hover {
     
     if(session == null || session.getAttribute("userid") == null){
     	response.sendRedirect("signin.jsp");
-    }
-    
+    }   
     %>
 <%@include file="header.jsp" %>
 <div id="posts-container">

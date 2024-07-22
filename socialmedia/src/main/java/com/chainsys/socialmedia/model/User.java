@@ -8,7 +8,7 @@ public class User {
 	private String email;
 	private String password;
 	private String confirmPassword;
-	private byte[] profile;
+	private String profile;
 	
 	public User() {
 		super();
@@ -23,11 +23,10 @@ public class User {
 		this.password = password;
 		this.confirmPassword = confirmpassword;
 	}
-	
-	public byte[] getProfile() {
+	public String getProfile() {
 		return profile;
 	}
-	public void setProfile(byte[] profile) {
+	public void setProfile(String profile) {
 		this.profile = profile;
 	}
 	public int getUserId() {

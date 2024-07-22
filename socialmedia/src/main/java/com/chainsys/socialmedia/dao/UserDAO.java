@@ -38,8 +38,9 @@ public interface UserDAO {
 	public List<UserReport> getReport();
 	public void deleteUser(int userId);
 	public Message getReportedMessage(int senderId,int receiverId); 
-	public void reportPost(int postId,int userId,byte[] image,String contnt,String reason);
+	public void reportPost(int postId,int userId,String image,String contnt,String reason);
 	public Post getPost(int postId);
 	public List<ReportPost> getPostReport();
 	public List<User> toSearch(String name);
+	public void updatePassword(String password,String email);
 }

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@latest"></script>
+<link rel="stylesheet" href="home.css">
+ <link rel="stylesheet" href="header.css"> 
+</head>
+<body>
+<div th:include="header :: header"></div>
+    <div th:if="${#lists.size(posts) > 0}">
+        <div th:each="post : ${posts}" class="posts">
+            <div class="post-title">
+                <div class="post-left">
+                    <div class="image">
+                        <a th:href="@{/profile}">
+                            <img th:src="@{'data:image/jpeg;base64,' + ${post.userProfileImage}}" alt="Profile">
+                        </a>
+                    </div>
+                    <div class="details">
+                        <p class="name" th:text="${post.userName}"></p>
+                        <span class="comment-timestamp" th:attr="data-timestamp=${post.timestamp}" th:text="${post.timestamp}"></span>
+                    </div>
+                </div>
+                <div class="post-right">
+                    <i class="fa fa-ellipsis" onclick="toggleDeleteOption(this)"></i>
+                    <div class="delete-option" style="display: none;">
+                        <div th:if="${session.userid == post.userId}">
+                            <form th:action="@{/deletePost}" method="post">
+                                <input type="hidden" name="id" th:value="${post.id}">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </div>
+                        <div th:if="${session.userid != post.userId}">
+                            <form th:action="@{/reportPost}" method="post">
+                                <input type="hidden" name="id" th:value="${post.id}">
+                                <button type="submit">Report</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="post-content">
+				<div th:if="${post.contentType != null}">
+					<div th:if="${post.contentType.startsWith('image')}">
+						<img
+							th:src="@{'data:' + ${post.contentType} + ';base64,' + ${post.image}}"
+							alt="Post Content">
+					</div>
+					<div th:if="${post.contentType.startsWith('video')}">
+						<video width="640" height="480" controls>
+							<source
+								th:src="@{'data:' + ${post.contentType} + ';base64,' + ${post.image}}"
+								th:type="${post.contentType}">
+						</video>
+					</div>
+				</div>
+				<p th:text="${post.description}"></p>
+            </div>
+            <div class="post-footer">
+                <div class="like-share-comment">
+					<i th:id="'like-button-' + ${post.id}"
+						th:classappend="${post.liked} ? 'fa-solid' : 'fa-regular'"
+						class="fa-heart like-button"
+						th:onclick="'toggleLike(' + ${post.id} + ', ' + ${session.userid} + ')'"></i>
+					<span th:id="'like-count-' + ${post.id}" class="like-count-tooltip" th:text="${post.likeCount} + ' likes'">
+                        <div class="tooltip-content" th:id="'tooltip-' + ${post.id}">
+                            <h5>See who liked this post:</h5>
+                            <ul>
+                                <li th:each="user : ${post.likedUsers}" th:text="${user.firstName} + ' ' + ${user.lastName}"></li>
+                            </ul>
+                        </div>
+                    </span>
+                </div>
+                <i class="fa fa-comment" th:onclick="'openCommentModal(' + ${post.id} + ')'"></i>
+            </div>
+            <div th:id="'commentModal-' + ${post.id}" class="modal">
+                <div class="modal-content">
+                    <span class="close" th:attr="data-postId=${post.id}" th:onclick="'closeCommentModal(' + ${post.id} + ')'">&times;</span>
+                    <h5>Comments</h5>
+                    <div th:id="'commentsContainer-' + ${post.id}">
+                        <div th:each="comment : ${post.comments}">
+                            <a>
+                                <strong th:text="${comment.userName}"></strong>: <span th:text="${comment.comment}"></span>
+                                <span class="comment-timestamp" th:attr="data-timestamp=${comment.createdAt}" th:text="${comment.createdAt}"></span>
+                            </a>
+                            <br>
+                        </div>
+                    </div>
+                    <form th:action="@{/comment}" method="post">
+                        <textarea th:id="'newComment-' + ${post.id}" rows="1" name="comment" placeholder="Add a comment..."></textarea>
+                        <input type="hidden" name="userid" th:value="${session.userId}" />
+                        <input type="hidden" name="postid" th:value="${post.id}" />
+                        <button type="submit" class="submitComment">Post Comment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(posts)}">
+        <p>No posts available.</p>
+    </div>
+     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        function timeAgo(timestamp) {
+            const now = new Date();
+            const postDate = new Date(timestamp);
+            const seconds = Math.floor((now - postDate) / 1000);
+            let interval = Math.floor(seconds / 31536000);
+
+            if (interval >= 1) {
+                return interval + " year" + (interval === 1 ? "" : "s") + " ago";
+            }
+
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) {
+                return interval + " month" + (interval === 1 ? "" : "s") + " ago";
+            }
+
+            interval = Math.floor(seconds / 86400);
+            if (interval >= 1) {
+                return interval + " day" + (interval === 1 ? "" : "s") + " ago";
+            }
+
+            interval = Math.floor(seconds / 3600);
+            if (interval >= 1) {
+                return interval + " hour" + (interval === 1 ? "" : "s") + " ago";
+            }
+
+            interval = Math.floor(seconds / 60);
+            if (interval >= 1) {
+                return interval + " minute" + (interval === 1 ? "" : "s") + " ago";
+            }
+
+            return Math.floor(seconds) + " second" + (seconds === 1 ? "" : "s") + " ago";
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const timestampElements = document.querySelectorAll('.comment-timestamp');
+            timestampElements.forEach(element => {
+                const timestamp = element.getAttribute('data-timestamp');
+                element.textContent = timeAgo(timestamp);
+            });
+        });
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    function toggleDeleteOption(element) {
+        const deleteOption = element.nextElementSibling;
+        deleteOption.style.display = deleteOption.style.display === 'none' ? 'block' : 'none';
+    }
+
+    var modals = document.querySelectorAll("[id^='commentModal-']");
+
+    modals.forEach(function(modal) {
+        var postId = modal.id.split("-")[1]; // Extract postId from modal id
+        var submitButton = modal.querySelector(".submitComment");
+
+        submitButton.onclick = function() {
+            submitComment(postId);
+        };
+    });
+
+    function openCommentModal(postId) {
+        document.getElementById('commentModal-' + postId).style.display = 'block';
+    }
+
+    function closeCommentModal(postId) {
+        document.getElementById('commentModal-' + postId).style.display = 'none';
+    }
+
+    function toggleLike(postId, userId) {
+        $.ajax({
+            type: "POST",
+            url: "/like",
+            data: JSON.stringify({postId: postId, userId: userId}),
+            contentType: "application/json",
+            success: function(response) {
+                if (response.success) {
+                    let likeButton = $('#like-button-' + postId);
+                    if (response.liked) {
+                        likeButton.removeClass('fa-regular').addClass('fa-solid');
+                    } else {
+                        likeButton.removeClass('fa-solid').addClass('fa-regular');
+                    }
+                    $('#like-count-' + postId).text(response.likeCount + ' likes');
+                }
+            },
+            error: function() {
+                alert("Error liking the post.");
+            }
+        });
+    }
+    
+    function openCommentModal(postId) {
+        $('#commentModal-' + postId).show();
+    }
+
+    function closeCommentModal(postId) {
+        $('#commentModal-' + postId).hide();
+    }
+    </script>
+</body>
+</html>

@@ -13,7 +13,7 @@ public class CommentMapper implements RowMapper<Comment>{
 	public Comment mapRow(ResultSet rs, int rowNum) throws SQLException {
 		Comment comment = new Comment();
         comment.setCommentId(rs.getInt("comment_id"));
-        comment.setUserid(rs.getInt("user_id"));
+        comment.setUserId(rs.getInt("user_id"));
         comment.setComment(rs.getString("content"));
         comment.setCreatedAt(rs.getString("created_at"));
         return comment;

@@ -2,6 +2,7 @@ package com.chainsys.socialmedia.mapping;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Base64;
 
 import org.springframework.jdbc.core.RowMapper;
 
@@ -12,7 +13,7 @@ public class PostMapper implements RowMapper<Post> {
 	public Post mapRow(ResultSet rs, int rowNum) throws SQLException {
 		Post post=new Post();
 		post.setDescription(rs.getString("description"));
-        post.setImage(rs.getBytes("image"));
+        post.setImage(Base64.getEncoder().encodeToString(rs.getBytes("image")));
         post.setUsername(rs.getString("user_name"));
         post.setTimestamp(rs.getString("timestamp"));
         post.setContentType(rs.getString("content"));

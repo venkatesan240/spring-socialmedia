@@ -200,7 +200,7 @@ li {
                     <li><a href="#">User 3</a></li>
                 </ul>
             <li><a href="home.jsp"><i class="fa-solid fa-house nav-icon"></i></a></li>
-            <li><a href="${pageContext.request.contextPath}/userlist"><i class="fa-solid fa-message nav-icon"></i></a></li>
+            <li><a href="/userlist"><i class="fa-solid fa-message nav-icon"></i></a></li>
             <li><a href="post.jsp"><i class="fa-solid fa-square-plus nav-icon"></i></a></li>
             <li><a href="#"><i class="fa-solid fa-heart nav-icon"></i></a></li>
             <li class="nav-item profile-icon">

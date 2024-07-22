@@ -26,9 +26,6 @@ public class UserDaoImpl implements UserDAO{
 
 	 @Autowired
 	    JdbcTemplate  jdbcTemplate;
-	 
-	    @Autowired
-	    UserMapper ur; 
 	    
 	    CommentMapper crm;
 	  
@@ -65,7 +62,7 @@ public class UserDaoImpl implements UserDAO{
 		public User getUserDetails(String email) {
 			String query="select * from user where email=? AND is_deleted = 0";
 			Object[] params= {email};
-			return jdbcTemplate.queryForObject(query,params,ur);
+			return jdbcTemplate.queryForObject(query,params,new UserMapper());
 		}
 
 		@Override
@@ -87,7 +84,7 @@ public class UserDaoImpl implements UserDAO{
 		public User getUserById(int id) {
 			String query="select * from user where user_id=? AND is_deleted = 0";
 			Object[] params= {id};
-			return jdbcTemplate.queryForObject(query,params,ur);
+			return jdbcTemplate.queryForObject(query,params,new UserMapper());
 		}
 
 		@Override
@@ -181,7 +178,7 @@ public class UserDaoImpl implements UserDAO{
 
 		@Override
 		public List<User> selectUsers() {
-			 String query = "SELECT user_id, first_name,last_name,profile FROM user where  is_deleted = 0";
+			 String query = "SELECT user_id,first_name,last_name FROM user where  is_deleted = 0";
 			return jdbcTemplate.query(query,new LikeMapper() );
 		}
 
@@ -245,7 +242,7 @@ public class UserDaoImpl implements UserDAO{
 		}
 
 		@Override
-		public void reportPost(int postId,int userId,byte[] image,String content,String reason) {
+		public void reportPost(int postId,int userId,String image,String content,String reason) {
 			String query="insert into reportpost(post_id,user_id,post,content_type,reason)values(?,?,?,?,?)";
 			Object[] param= {postId,userId,image,content,reason};
 			jdbcTemplate.update(query,param);
@@ -266,8 +263,15 @@ public class UserDaoImpl implements UserDAO{
 
 		@Override
 		public List<User> toSearch(String name) {
-			String query="select user_id,first_name,last_name,email,password,profile from user where first_name like ? and is_active=0";
+			String query="select * from user where first_name like ? and is_active=0";
 			Object[] param= {name};
 			return jdbcTemplate.query(query, param, new UserMapper());
+		}
+
+		@Override
+		public void updatePassword(String password, String email) {
+			String query="update user set password=? where email=?";
+			Object[] param= {password,email};
+			jdbcTemplate.update(query, param);
 		}
 }

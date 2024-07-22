@@ -1,6 +1,7 @@
 package com.chainsys.socialmedia.model;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class Post {
 	
@@ -9,20 +10,50 @@ public class Post {
     private String userName;
     private String description;
     private String contentType;
-    private byte[] image;
+    private String image;
     private String timeStamp;
     private int likeCount; 
+    private Boolean liked;
+    private String userProfileImage;
+    private List<User> likedUsers;
+    private List<Comment> comments;
     
 	public Post() {
 		super();
 	}
-	public Post(int id, String username, String description, byte[] image, String timestamp) {
+	public Post(int id, String username, String description, String image, String timestamp) {
 		super();
 		this.id = id;
 		this.userName = username;
 		this.description = description;
 		this.image = image;
 		this.timeStamp = timestamp;
+	}
+	
+	
+	public Boolean getLiked() {
+		return liked;
+	}
+	public void setLiked(Boolean liked) {
+		this.liked = liked;
+	}
+	public List<Comment> getComments() {
+		return comments;
+	}
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+	public List<User> getLikedUsers() {
+		return likedUsers;
+	}
+	public void setLikedUsers(List<User> likedUsers) {
+		this.likedUsers = likedUsers;
+	}
+	public String getUserProfileImage() {
+		return userProfileImage;
+	}
+	public void setUserProfileImage(String userProfileImage) {
+		this.userProfileImage = userProfileImage;
 	}
 	public int getLikeCount() {
 		return likeCount;
@@ -54,10 +85,10 @@ public class Post {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public byte[] getImage() {
+	public String getImage() {
 		return image;
 	}
-	public void setImage(byte[] image) {
+	public void setImage(String image) {
 		this.image = image;
 	}
 	public String getTimestamp() {
@@ -72,11 +103,6 @@ public class Post {
 	}
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
-	}
-	@Override
-	public String toString() {
-		return "Post [id=" + id + ", username=" + userName + ", description=" + description + ", image="
-				+ Arrays.toString(image) + ", timestamp=" + timeStamp + "]";
 	}
     
 

@@ -1,0 +1,343 @@
+ body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+        }
+        .post-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+            margin-bottom: 20px;
+            margin-top:10px;
+        }
+        .post-form h2 {
+            margin-top: 0;
+        }
+        .post-form input[type="file"] {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .post-form textarea {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .post-form button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0e0f0f;
+            color: white;
+            cursor: pointer;
+        }
+        .post-form button:hover {
+            background-color: #202327;
+        }
+        .posts {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .post-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .post-left {
+            display: flex;
+            align-items: center;
+        }
+        .image {
+            width: 50px;
+            height: 50px;
+            overflow: hidden;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .details {
+            margin-left: 10px;
+        }
+        .details .name {
+            font-weight: bold;
+            margin: 0;
+        }
+        .details .timestamp {
+            color: #777;
+            margin: 0;
+            font-size: 0.9em;
+        }
+        .post-content {
+            text-align: center;
+        }
+        .post-content img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 5px;
+        }
+        .post-content p {
+            text-align: left;
+            padding-left: 10px;
+        }
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+        }
+        .like-share-commant i {
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        .like-share-commant i:hover {
+            color: #ff4081;
+        }
+        .like-share-commant .liked i {
+            color: #ff4081;
+        }
+        .add-comment {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+        }
+        .left-side {
+            display: flex;
+            align-items: center;
+            width: 80%;
+        }
+        .left-side i {
+            margin-right: 10px;
+        }
+        .left-side input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+        }
+        .right-side p {
+            margin: 0;
+            color: #007bff;
+            cursor: pointer;
+        }
+         .post-right {
+            position: relative;
+            display: inline-block;
+        }
+
+        .fa-ellipsis {
+            cursor: pointer;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .delete-option {
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: none; /* Hidden by default */
+            z-index: 1000;
+        }
+
+        .delete-option form {
+            margin: 5px 0;
+        }
+
+        .delete-option button {
+            background-color: #e74c3c;
+            border: none;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 5px 0;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        .delete-option button:hover {
+           background-color: #c0392b;
+        }
+       /* Modal container */
+.modal {
+  /*   display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0; */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    justify-content: center;  /* Center horizontally */
+    align-items: center;  /* Center vertically */
+    display: flex;
+}
+
+/* Modal content */
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    position:absolute;
+    left:400px;
+    top:140px;
+     /* To position the close button correctly */
+}
+
+/* Close button */
+.close {
+    color: #aaa;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+/* Comments container */
+#commentsContainer {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+#commentsContainer a {
+    display: block;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+#commentsContainer a:last-child {
+    border-bottom: none;
+}
+
+/* Form */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 3px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+}
+
+button {
+    align-self: flex-end;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+.like-section {
+    position: relative;
+    display: inline-block;
+}
+
+.like-count-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-content {
+    visibility: hidden;
+    opacity: 0;
+    width: 200px;
+    background-color: #f9f9f9;
+    color: #000;
+    text-align: left;
+    border-radius: 5px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position the tooltip above the text */
+    left: 60px;
+    margin-left: -100px; /* Center the tooltip */
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+    transition: opacity 0.3s;
+}
+
+.tooltip-content::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #f9f9f9 transparent transparent transparent;
+}
+
+.like-count-tooltip:hover .tooltip-content {
+    visibility: visible;
+    opacity: 1;
+}
+.alert {
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
