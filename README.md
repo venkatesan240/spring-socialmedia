@@ -50,3 +50,6 @@ Follow Users:
 The follow feature allows users to connect with others and stay updated on their activities. Users can follow friends, influencers, or any profile they are interested in to see their posts and interactions in their feed.
 Share Posts with Others:
 Users can share posts from other users to their own profile or directly with friends via messages. This feature helps content spread across the platform, increasing visibility and engagement.
+Manual and ppt:
+ppt:https://docs.google.com/presentation/d/1npFbYeyUL__7Uqqj0gUSIkzeOSukHFL2/edit#slide=id.p1
+Manual:https://docs.google.com/document/d/1mcMAbbGYTy05gbcl7FiW3ff1qiFf5LWvbsLf1PPHIWs/edit
